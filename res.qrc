@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/check.png</file>
+        <file>res/logo.png</file>
+        <file>res/minus.png</file>
+        <file>res/options.png</file>
+        <file>res/pbar1.png</file>
+        <file>res/pbar2.png</file>
+        <file>res/pbar3.png</file>
+        <file>res/sound.wav</file>
+        <file>res/Viewaide_ru.qm</file>
+        <file>res/x.png</file>
+    </qresource>
+</RCC>
