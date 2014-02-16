@@ -12,7 +12,7 @@
 #include <QProcess>
 
 #include "downloadfile.h"
-
+///////////////////////////
 class UpdateApp : public QObject
 {
     Q_OBJECT
