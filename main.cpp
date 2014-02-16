@@ -9,7 +9,7 @@
 #include "downloadfile.h"
 
 using namespace std;
-/////////////////////
+
 bool check_options()
 {
     QString path = QCoreApplication::applicationDirPath();
@@ -19,7 +19,7 @@ bool check_options()
         return 0;
     return 1;
 }
-///////////////
+
 bool ParseCommandLine(int argc, char *argv[])
 {
     QStringList args;
