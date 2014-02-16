@@ -9,7 +9,7 @@
 #include "downloadfile.h"
 
 using namespace std;
-
+/////////////////////
 bool check_options()
 {
     QString path = QCoreApplication::applicationDirPath();
