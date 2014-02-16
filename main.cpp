@@ -33,7 +33,7 @@ bool ParseCommandLine(int argc, char *argv[])
         return false;
     return true;
 }
-
+//lol
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
