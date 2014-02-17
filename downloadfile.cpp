@@ -28,8 +28,8 @@ void DownloadFile::emitDownload(const QString& url_path)
 void DownloadFile::downloadFinished(QNetworkReply *data)
 {
     QString file_name = target.section('/', -1);
-    int ind = file_name.indexOf(".");
-    file_name.insert(ind,"_new");
+    //int ind = file_name.indexOf(".");
+    //file_name.insert(ind,"_new");
     QFile localFile(file_name);
     if (!localFile.open(QIODevice::WriteOnly))
         return;

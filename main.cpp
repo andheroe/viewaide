@@ -20,20 +20,6 @@ bool check_options()
     return 1;
 }
 
-bool ParseCommandLine(int argc, char *argv[])
-{
-    QStringList args;
-    for ( int j = 0; j < argc; ++j)
-    {
-        String str = (const char*)argv[j];
-        args << QString::fromStdString(str);
-    }
-
-    if ( argv[0] == "Update" )
-        return false;
-    return true;
-}
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -44,9 +30,6 @@ int main(int argc, char *argv[])
     DownloadFile down_file;
     UpdateApp upd_app;
 
-    if ( ParseCommandLine(argc, argv) )
-        UpdateApp::ChangeRequireUpd(true);
-
     QObject::connect(&down_file, SIGNAL(done(const QString&)), &upd_app, SLOT(slotDoneLoad(const QString&)));
     QObject::connect(stream, SIGNAL(sigCheckUpdate()), &upd_app, SLOT(slotCheckUpdate()));
     QObject::connect(DownloadFile::GetInstance(), SIGNAL(sigDownload(const QString&)), &down_file, SLOT(slotDownload(const QString&)) );
@@ -56,7 +39,6 @@ int main(int argc, char *argv[])
     QObject::connect(m_w.ui_2->cmb_lang, SIGNAL(currentIndexChanged(int)), &m_w, SLOT(slotChangeLang(int)) );
 
     QObject::connect ( m_w.tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), &m_w, SLOT(slotPopupMenu())  );
-
 
     QObject::connect(stream, SIGNAL(UnlockCam()), &m_w, SLOT(slotUnlockCam()));
     QObject::connect(stream, SIGNAL(UnlockCam()), &s_t, SLOT(start()) );

@@ -802,8 +802,7 @@ void CamStream::SaveCurFaceKoeffs()
 
 void CamStream::run()
 {
-//    if(UpdateApp::require_upd)
-//        emit sigCheckUpdate();
+    //emit sigCheckUpdate();
 
     emit UnlockCam();
     log<<"Thread is running"<<"\n";
