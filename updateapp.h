@@ -42,10 +42,15 @@ private:
     QStringList new_version;
 
 signals:
+    void sigUpdateOrReject();
+    void sigAcceptDownload();
+    void sigRejectDownload();
 
 public slots:
     void slotDoneLoad(const QString& file_name);
     bool slotCheckUpdate();
+    void slotAcceptDownload();
+    void slotRejectDownload();
 
 };
 

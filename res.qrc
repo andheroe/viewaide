@@ -10,5 +10,6 @@
         <file>res/sound.wav</file>
         <file>res/Viewaide_ru.qm</file>
         <file>res/x.png</file>
+        <file>res/logo_login.png</file>
     </qresource>
 </RCC>

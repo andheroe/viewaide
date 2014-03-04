@@ -27,6 +27,26 @@ bool UpdateApp::slotCheckUpdate()
     DownloadAnyFile(url_inf_file);
 }
 
+void UpdateApp::slotAcceptDownload()
+{
+    QString path = QCoreApplication::applicationDirPath();
+    path += "/";
+    path += inf_file;
+
+    DownloadAnyFile(url_app_file);
+    //QFile(path).remove();
+
+}
+
+void UpdateApp::slotRejectDownload()
+{
+    QString path = QCoreApplication::applicationDirPath();
+    path += "/";
+    path += inf_file;
+
+    //QFile(path).remove();
+}
+
 bool UpdateApp::CompareVersions(const QString& new_version)
 {
     if ( APP_VERSION.toDouble() < new_version.toDouble() )
@@ -53,11 +73,16 @@ void UpdateApp::slotDoneLoad(const QString& file_name)
 
         if ( CompareVersions(new_version.at(0)) )
         {
-            DownloadAnyFile(url_app_file);
-            QFile(path).remove();
+
+            sigUpdateOrReject();
+
         }
         else
-            QFile(path).remove();
+        {
+
+            //sigRejectDownload();
+
+        }
     }
     else if ( file_name == "viewaide-win-setup.exe" )
     {
