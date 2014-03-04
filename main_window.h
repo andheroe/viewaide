@@ -53,9 +53,12 @@ public:
     QAction* act_window;
     QAction* act_options;
     QAction* act_calibrate;
+    QAction* act_logout;
     QAction* act_exit;
 
     QMenu* menu;
+
+    static bool block_popup_msg;
 
 private:
     static const int sleep_time;
@@ -89,14 +92,11 @@ private:
     static int numb_fails;
     static const int max_numb_fails;
 
-
     void changeTranslator ( QString );
 
     inline void SetRules();
     inline void InitAnim( int start_widg_pos, int end_widg_pos );
     inline void StartAnim();
-
-    inline bool check_options();
 
     inline void ResetCalibration();
 
@@ -104,6 +104,8 @@ private:
 
     inline void InitNotifAnim();
     inline void SetNotifGeom();
+
+    inline bool CheckOptions();
 
 protected:
     void mouseMoveEvent(QMouseEvent* event);
@@ -150,6 +152,12 @@ public slots:
     void slotEyesBlink();
     void slotBadLightness();
     void slotFirstMsg();
+
+    void slotDrawUpdWnd();
+    void slotBlockPopupMsg(bool show_msg);
+    void slotSetDefaultWnd();
+
+    void slotWhatModeRun();
 
 signals:
     void sigSendCalibStage(calibration_stages stage);

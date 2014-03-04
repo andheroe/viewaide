@@ -56,7 +56,9 @@ SOURCES += main.cpp\
     mywidget.cpp \
     specialthread.cpp \
     downloadfile.cpp \
-    updateapp.cpp
+    updateapp.cpp \
+    regandlogin.cpp \
+    connectwithserver.cpp
 
 HEADERS  += \
     main_window.h \
@@ -66,11 +68,14 @@ HEADERS  += \
     mywidget.h \
     specialthread.h \
     downloadfile.h \
-    updateapp.h
+    updateapp.h \
+    regandlogin.h \
+    connectwithserver.h
 
 FORMS    += \
     main_window.ui \
-    form.ui
+    form.ui \
+    regandlogin.ui
 
 RESOURCES += \
     res.qrc
@@ -78,7 +83,7 @@ RESOURCES += \
 TRANSLATIONS += \
     Viewaide_ru.ts
 
-OTHER_FILES += \
-    Viewaide.ts
+RC_FILE = icon.rc
+
 
 
