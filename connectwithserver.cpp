@@ -141,7 +141,7 @@ void ConnectWithServer::registration(QString firstname,QString secondname,QStrin
 
     rep=manager->post(req,body);
     QEventLoop loop;
-    connect(rep,SIGNAL(readyRead()),this,SLOT(regRead()));
+    connect(rep,SIGNAL(finished()),this,SLOT(regRead()));
     loop.exec();
 }
 
@@ -169,7 +169,7 @@ void ConnectWithServer::login(QString logIn, QString password)
 
     rep=manager->post(req, body);
     QEventLoop loop;
-    connect(rep,SIGNAL(readyRead()),this,SLOT(loginRead()));
+    connect(rep,SIGNAL(finished()),this,SLOT(loginRead()));
     loop.exec();
 }
 
