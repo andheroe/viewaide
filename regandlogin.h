@@ -45,14 +45,17 @@ private:
 
 public slots:
     void hideLogin();
+    void hideReg();
     void inputToApp();
     void notInputToApp();
+    void slotRepeatConnect();
     void slotLogout();
 
 signals:
     void netIsNotWorking();
     void fileWasCreate();
     void windowCreate();
+    void sigRepeatPlease();
     void sigRunMainProgram();
 
 protected:

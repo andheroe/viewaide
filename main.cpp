@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(m_w.act_logout, SIGNAL(triggered()), &reg_and_log, SLOT(slotLogout()));
     QObject::connect(m_w.act_logout, SIGNAL(triggered()), m_w.ui_2->widget_3, SLOT(hide()));
+    QObject::connect(m_w.act_logout, SIGNAL(triggered()), &reg_and_log, SLOT(slotRepeatConnect()));
     QObject::connect(m_w.act_logout, SIGNAL(triggered()), &reg_and_log, SLOT(show()));
 
 

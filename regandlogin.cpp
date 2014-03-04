@@ -12,6 +12,7 @@ RegAndLogIn::RegAndLogIn(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint);
     connect(this,SIGNAL(netIsNotWorking()),this,SLOT(hideLogin()));
+    connect(this,SIGNAL(sigRepeatPlease()),this,SLOT(slotRepeatConnect()));
     connect(this, SIGNAL(windowCreate()), SLOT(isAccCreate()), Qt::QueuedConnection);
     connect(this,SIGNAL(fileWasCreate()),this,SLOT(inputToApp()));
     ui->pushButton_4->hide();
@@ -26,8 +27,8 @@ RegAndLogIn::RegAndLogIn(QWidget *parent) :
     ui->checkBox->hide();
     ui->label->hide();
     ui->label_2->hide();
-    this->setFixedSize(318,475);
     this->setWindowTitle("Viewaide");
+    this->setFixedSize(318,475);
     QPalette pal = this->palette();
     pal.setColor(QPalette::Window, QColor::fromRgb(45,64,71));
     this->setPalette(pal);
@@ -142,11 +143,6 @@ void RegAndLogIn::on_pushButton_clicked()
     connect(logToServer,SIGNAL(trueLogin()),this,SLOT(inputToApp()));
     connect(logToServer,SIGNAL(falseLogin()),this,SLOT(notInputToApp()));
     logToServer->login(ui->lineEdit->text(),ui->lineEdit_2->text());
-    QFile fileAccount("account.txt");
-    fileAccount.open(QIODevice::WriteOnly);
-    QTextStream out(&fileAccount);
-    out << ui->lineEdit->text();
-    fileAccount.close();
     delete logToServer;
 }
 
@@ -195,7 +191,7 @@ void RegAndLogIn::on_pushButton_5_clicked()
         return;
     ConnectWithServer *regToServer;
     regToServer=new ConnectWithServer;
-    connect(regToServer,SIGNAL(notConnectWithServer()),this,SLOT(hideLogin()));
+    connect(regToServer,SIGNAL(notConnectWithServer()),this,SLOT(hideReg()));
     connect(regToServer,SIGNAL(trueReg()),this,SLOT(dataAcceptedOnServ()));
     connect(regToServer,SIGNAL(falseReg()),this,SLOT(dataNotAcceptedOnServ()));
     regToServer->registration(ui->lineEdit_3->text(),ui->lineEdit_4->text(),
@@ -365,15 +361,14 @@ void RegAndLogIn::isAccCreate()
 
 void RegAndLogIn::inputToApp()
 {
+    QFile fileAccount("account.txt");
+    fileAccount.open(QIODevice::WriteOnly);
+    QTextStream out(&fileAccount);
+    out << ui->lineEdit->text();
+    fileAccount.close();
     hide();
     emit sigRunMainProgram();
     //Запуск приложения
-}
-
-void RegAndLogIn::notInputToApp()
-{
-    ui->label->setText("Неверный логин или пароль!");
-    ui->label->show();
 }
 
 void RegAndLogIn::slotLogout()
@@ -387,6 +382,12 @@ void RegAndLogIn::slotLogout()
     file.remove();
     ui->lineEdit->setText("");
     ui->lineEdit_2->setText("");
+}
+
+void RegAndLogIn::notInputToApp()
+{
+    ui->label->setText("Неверный логин или пароль!");
+    ui->label->show();
 }
 
 void RegAndLogIn::dataAcceptedOnServ()
@@ -407,13 +408,57 @@ void RegAndLogIn::hideLogin()
     ui->pushButton_2->hide();
     ui->pushButton_3->hide();
     ui->lineEdit->hide();
+    ui->lineEdit->setText("");
+    ui->lineEdit->setStyleSheet("background-color:rgb(255,255,255);"
+                                "border: 2px solid rgb(17,164,192);"
+                                "border-radius: 5px;padding: 0 4px;");
     ui->lineEdit_2->hide();
+    ui->lineEdit_2->setText("");
+    ui->lineEdit_2->setStyleSheet("background-color:rgb(255,255,255);"
+                                "border: 2px solid rgb(17,164,192);"
+                                "border-radius: 5px;padding: 0 4px;");
+    ui->label->setText("Нет соединения с сервером!\nПроверьте подключение!");
+    ui->label->show();
+    ui->pushButton_7->show();
+}
+
+void RegAndLogIn::hideReg()
+{
+    ui->pushButton_4->hide();
+    ui->pushButton_5->hide();
+    ui->pushButton_6->hide();
+    ui->pushButton_8->hide();
+    ui->lineEdit_3->hide();
+    ui->lineEdit_3->setText("");
+    ui->lineEdit_3->setStyleSheet("background-color:rgb(255,255,255);"
+                                "border: 2px solid rgb(17,164,192);"
+                                "border-radius: 5px;padding: 0 4px;");
+    ui->lineEdit_4->hide();
+    ui->lineEdit_4->setText("");
+    ui->lineEdit_4->setStyleSheet("background-color:rgb(255,255,255);"
+                                "border: 2px solid rgb(17,164,192);"
+                                "border-radius: 5px;padding: 0 4px;");
+    ui->lineEdit_5->hide();
+    ui->lineEdit_5->setText("");
+    ui->lineEdit_5->setStyleSheet("background-color:rgb(255,255,255);"
+                                "border: 2px solid rgb(17,164,192);"
+                                "border-radius: 5px;padding: 0 4px;");
+    ui->lineEdit_6->hide();
+    ui->lineEdit_6->setText("");
+    ui->lineEdit_6->setStyleSheet("background-color:rgb(255,255,255);"
+                                "border: 2px solid rgb(17,164,192);"
+                                "border-radius: 5px;padding: 0 4px;");
     ui->label->setText("Нет соединения с сервером!\nПроверьте подключение!");
     ui->label->show();
     ui->pushButton_7->show();
 }
 
 void RegAndLogIn::on_pushButton_7_clicked()
+{
+    emit sigRepeatPlease();
+}
+
+void RegAndLogIn::slotRepeatConnect()
 {
     ConnectWithServer *rep;
     rep=new ConnectWithServer;
@@ -422,7 +467,15 @@ void RegAndLogIn::on_pushButton_7_clicked()
         ui->pushButton->show();
         ui->pushButton_2->show();
         ui->pushButton_3->show();
+        ui->lineEdit->setText("");
+        ui->lineEdit->setStyleSheet("background-color:rgb(255,255,255);"
+                                    "border: 2px solid rgb(17,164,192);"
+                                    "border-radius: 5px;padding: 0 4px;");
         ui->lineEdit->show();
+        ui->lineEdit_2->setText("");
+        ui->lineEdit_2->setStyleSheet("background-color:rgb(255,255,255);"
+                                    "border: 2px solid rgb(17,164,192);"
+                                    "border-radius: 5px;padding: 0 4px;");
         ui->lineEdit_2->show();
         ui->label->hide();
         ui->pushButton_7->hide();

@@ -25,8 +25,8 @@
   <widget class="MyWidget" name="widget" native="true">
    <property name="geometry">
     <rect>
-     <x>740</x>
-     <y>299</y>
+     <x>690</x>
+     <y>260</y>
      <width>250</width>
      <height>91</height>
     </rect>
