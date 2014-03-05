@@ -224,12 +224,15 @@ private:
     static QFile log_file;
     static QTextStream log;
 
+
+
 protected:
     QImage ToQImage(IplImage* image);
     void run();
 
 public:
     bool calibration_mode_on;
+    static bool is_popup_showed;
     CamStream();
     ~CamStream();
 

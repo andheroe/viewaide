@@ -7,32 +7,9 @@
 #include "specialthread.h"
 #include "updateapp.h"
 #include "downloadfile.h"
+#include "regandlogin.h"
 
 using namespace std;
-
-bool check_options()
-{
-    QString path = QCoreApplication::applicationDirPath();
-    path += "//options.txt";
-    QFile file ( path );
-    if ( !file.open(QIODevice::ReadOnly) )
-        return 0;
-    return 1;
-}
-
-bool ParseCommandLine(int argc, char *argv[])
-{
-    QStringList args;
-    for ( int j = 0; j < argc; ++j)
-    {
-        String str = (const char*)argv[j];
-        args << QString::fromStdString(str);
-    }
-
-    if ( argv[0] == "Update" )
-        return false;
-    return true;
-}
 
 int main(int argc, char *argv[])
 {
@@ -43,9 +20,26 @@ int main(int argc, char *argv[])
     SpecialThread s_t ( &m_w );
     DownloadFile down_file;
     UpdateApp upd_app;
+    RegAndLogIn reg_and_log;
 
-    if ( ParseCommandLine(argc, argv) )
-        UpdateApp::ChangeRequireUpd(true);
+    reg_and_log.show();
+
+    QObject::connect(m_w.ui_2->btn_accept, SIGNAL(clicked()), &upd_app, SLOT(slotAcceptDownload()));
+    QObject::connect(m_w.ui_2->btn_notnow, SIGNAL(clicked()), &upd_app, SLOT(slotRejectDownload()));
+
+    QObject::connect(m_w.ui_2->btn_accept, SIGNAL(clicked()), &m_w, SLOT(slotNotifClose()));
+    QObject::connect(m_w.ui_2->btn_notnow, SIGNAL(clicked()), &m_w, SLOT(slotNotifClose()));
+
+    QObject::connect(m_w.ui_2->btn_notnow, SIGNAL(clicked(bool)), &m_w, SLOT(slotBlockPopupMsg(bool)));
+    QObject::connect(m_w.ui_2->btn_accept, SIGNAL(clicked(bool)), &m_w, SLOT(slotBlockPopupMsg(bool)));
+
+    QObject::connect(&upd_app, SIGNAL(sigUpdateOrReject()), &m_w, SLOT(slotDrawUpdWnd()), Qt::QueuedConnection);
+
+    QObject::connect(&upd_app, SIGNAL(sigRejectDownload()), &upd_app, SLOT(slotRejectDownload()));
+    QObject::connect(&upd_app, SIGNAL(sigAcceptDownload()), &upd_app, SLOT(slotAcceptDownload()));
+
+    QObject::connect(m_w.ui_2->btn_check_update, SIGNAL(clicked()), &upd_app, SLOT(slotCheckUpdate()));
+
 
     QObject::connect(&down_file, SIGNAL(done(const QString&)), &upd_app, SLOT(slotDoneLoad(const QString&)));
     QObject::connect(stream, SIGNAL(sigCheckUpdate()), &upd_app, SLOT(slotCheckUpdate()));
@@ -57,7 +51,6 @@ int main(int argc, char *argv[])
 
     QObject::connect ( m_w.tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), &m_w, SLOT(slotPopupMenu())  );
 
-
     QObject::connect(stream, SIGNAL(UnlockCam()), &m_w, SLOT(slotUnlockCam()));
     QObject::connect(stream, SIGNAL(UnlockCam()), &s_t, SLOT(start()) );
 
@@ -67,7 +60,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(m_w.ui_2->btn_close2, SIGNAL(clicked()), m_w.ui_2->widg_options, SLOT(hide()));
 
-    QObject::connect(m_w.ui->btn_minimize, SIGNAL(clicked()), &m_w, SLOT(slotMinimizeWindow()));
+    //QObject::connect(m_w.ui->btn_minimize, SIGNAL(clicked()), &m_w, SLOT(slotMinimizeWindow()));
 
 //    QObject::connect(m_w.ui_2->btn_minimize_2, SIGNAL(clicked()), m_w.ui_2->widget_3, SLOT(showMinimized()));
 //    QObject::connect(m_w.ui_2->btn_minimize, SIGNAL(clicked()), m_w.ui_2->widg_options, SLOT(showMinimized()));
@@ -78,6 +71,14 @@ int main(int argc, char *argv[])
 
     //QObject::connect(m_w.act_window, SIGNAL(triggered()), m_w.tray, SLOT(hide()) );
     QObject::connect(m_w.act_window, SIGNAL(triggered()), m_w.ui_2->widget_3, SLOT(show()));
+
+
+
+    QObject::connect(m_w.act_logout, SIGNAL(triggered()), &reg_and_log, SLOT(slotLogout()));
+    QObject::connect(m_w.act_logout, SIGNAL(triggered()), m_w.ui_2->widget_3, SLOT(hide()));
+    QObject::connect(m_w.act_logout, SIGNAL(triggered()), &reg_and_log, SLOT(slotRepeatConnect()));
+    QObject::connect(m_w.act_logout, SIGNAL(triggered()), &reg_and_log, SLOT(show()));
+
 
 
     QObject::connect(m_w.ui_2->btn_close_2, SIGNAL(clicked()), m_w.ui_2->widget_3, SLOT(hide()));
@@ -124,38 +125,42 @@ int main(int argc, char *argv[])
 
     QObject::connect(stream,SIGNAL(EyesAreTooLow()),&m_w,SLOT(TooLowAlert()),Qt::QueuedConnection );
     QObject::connect(stream,SIGNAL(EyesAreTooLow()), &s_t, SLOT(start()) );
+    QObject::connect(stream,SIGNAL(EyesAreTooLow()), &m_w,SLOT(slotSetDefaultWnd()));
 
 
     QObject::connect(stream,SIGNAL(TooMuchSquint()),&m_w,SLOT(SquintAlert()),Qt::QueuedConnection );
     QObject::connect(stream,SIGNAL(TooMuchSquint()), &s_t, SLOT(start()) );
+    QObject::connect(stream,SIGNAL(TooMuchSquint()), &m_w,SLOT(slotSetDefaultWnd()));
 
 
     QObject::connect(stream,SIGNAL(EyesAreTooNear()),&m_w,SLOT(TooNearAlert()),Qt::QueuedConnection );
     QObject::connect(stream,SIGNAL(EyesAreTooNear()), &s_t, SLOT(start()) );
+    QObject::connect(stream,SIGNAL(EyesAreTooNear()), &m_w,SLOT(slotSetDefaultWnd()));
 
     QObject::connect(stream,SIGNAL(EyesAreTooHeigh()),&m_w,SLOT(TooHeighAlert()),Qt::QueuedConnection );
     QObject::connect(stream,SIGNAL(EyesAreTooHeigh()), &s_t, SLOT(start()) );
+    QObject::connect(stream,SIGNAL(EyesAreTooHeigh()), &m_w,SLOT(slotSetDefaultWnd()));
 
     QObject::connect(stream,SIGNAL(TooFewBlink()),&m_w,SLOT(slotEyesBlink()),Qt::QueuedConnection );
     QObject::connect(stream,SIGNAL(TooFewBlink()), &s_t, SLOT(start()) );
+    QObject::connect(stream,SIGNAL(TooFewBlink()), &m_w,SLOT(slotSetDefaultWnd()));
 
     QObject::connect(stream,SIGNAL(EyesAreTooHeigh()),&m_w,SLOT(TooHeighAlert()),Qt::QueuedConnection );
     QObject::connect(stream,SIGNAL(EyesAreTooHeigh()), &s_t, SLOT(start()) );
+    QObject::connect(stream,SIGNAL(EyesAreTooHeigh()), &m_w,SLOT(slotSetDefaultWnd()));
 
     QObject::connect(stream,SIGNAL(BadLightness()),&m_w,SLOT(slotBadLightness()),Qt::QueuedConnection );
     QObject::connect(stream,SIGNAL(BadLightness()), &s_t, SLOT(start()) );
+    QObject::connect(stream,SIGNAL(BadLightness()),&m_w,SLOT(slotSetDefaultWnd()));
 
+
+    QObject::connect(&m_w,SIGNAL(sigRunFirstTray()),&m_w,SLOT(slotSetDefaultWnd()));
+    QObject::connect(&m_w,SIGNAL(sigRunGuiCalibrate()),&m_w,SLOT(slotSetDefaultWnd()));
 
     QObject::connect(stream,SIGNAL(ImageIsReady(QImage)),&m_w,SLOT(ShowImage(QImage)),Qt::QueuedConnection);
     QObject::connect(stream, SIGNAL(CheckCalibration(bool)), &m_w, SLOT(slotReceiveInfo(bool)) );
 
-    if ( check_options() )
-        m_w.sigRunFirstTray();
-    else
-        m_w.sigRunGuiCalibrate();
-
-    stream->start();
-
+    QObject::connect(&reg_and_log, SIGNAL(sigRunMainProgram()), &m_w, SLOT(slotWhatModeRun()) );
 
     return a.exec();
 }

@@ -235,37 +235,6 @@ color: white;</string>
     <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="btn_minimize">
-   <property name="geometry">
-    <rect>
-     <x>600</x>
-     <y>0</y>
-     <width>20</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>20</width>
-     <height>20</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>20</width>
-     <height>20</height>
-    </size>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">border-image: url(:/res/minus.png)stretch;</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="flat">
-    <bool>false</bool>
-   </property>
-  </widget>
   <widget class="MyLabel" name="lbl_count">
    <property name="geometry">
     <rect>
@@ -312,7 +281,6 @@ color: white;</string>
   <zorder>lbl_background</zorder>
   <zorder>lbl_rules</zorder>
   <zorder>lbl_pbar</zorder>
-  <zorder>btn_minimize</zorder>
   <zorder>btn_close</zorder>
  </widget>
  <customwidgets>

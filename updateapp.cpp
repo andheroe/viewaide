@@ -8,14 +8,11 @@ UpdateApp::UpdateApp(QObject *parent):
 QRegExp UpdateApp::reg_exp("(['vV']{1,1})([1-9]{1,1}[.][0-9]{1,1})");
 const QString UpdateApp::url_inf_file = "http://viewaide.com/update.inf";
 const QString UpdateApp::url_app_file = "http://viewaide.com/viewaide-win-setup.exe";
-const QString UpdateApp::old_inf = "//update.inf";
-const QString UpdateApp::new_inf = "//update_new.inf";
+const QString UpdateApp::inf_file = "update.inf";
 const QString UpdateApp::inf_file_prefix = "Update Version";
-const QString UpdateApp::app_file_prefix = "Update File";
+const QString UpdateApp::app_file_prefix = "Update App";
 const QString UpdateApp::begin_url_new_file = "http:";
-
-bool UpdateApp::require_upd = false;
-
+const QString UpdateApp::APP_VERSION = "1.0";
 
 bool UpdateApp::CheckFile(const QString& path_file)
 {
@@ -30,13 +27,32 @@ bool UpdateApp::slotCheckUpdate()
     DownloadAnyFile(url_inf_file);
 }
 
-bool UpdateApp::CompareVersions(QStringList old_version, QStringList new_version)
+void UpdateApp::slotAcceptDownload()
 {
-    if ( old_version.at(0).toDouble() < new_version.at(0).toDouble() )
+    QString path = QCoreApplication::applicationDirPath();
+    path += "/";
+    path += inf_file;
+
+    DownloadAnyFile(url_app_file);
+    //QFile(path).remove();
+
+}
+
+void UpdateApp::slotRejectDownload()
+{
+    QString path = QCoreApplication::applicationDirPath();
+    path += "/";
+    path += inf_file;
+
+    //QFile(path).remove();
+}
+
+bool UpdateApp::CompareVersions(const QString& new_version)
+{
+    if ( APP_VERSION.toDouble() < new_version.toDouble() )
         return true;
     else
         return false;
-
 }
 
 bool UpdateApp::DownloadAnyFile(const QString& url_path)
@@ -44,71 +60,58 @@ bool UpdateApp::DownloadAnyFile(const QString& url_path)
     DownloadFile::GetInstance()->emitDownload(url_path);
 }
 
-bool UpdateApp::RenameNewFile(const QString &name, const QString& new_name)
-{
-    QFile(name).rename(new_name);
-}
-
-bool UpdateApp::DeleteOldFile(const QString &name)
-{
-    QFile(name).remove();
-}
-
-void UpdateApp::ChangeRequireUpd(bool upd)
-{
-    require_upd = upd;
-}
-
 void UpdateApp::slotDoneLoad(const QString& file_name)
 {
-    if ( file_name == "update_new.inf" )
+
+    if ( file_name == inf_file )
     {
-        QString path_old = QCoreApplication::applicationDirPath();
-        path_old += old_inf;
-        if ( CheckFile(path_old) )
-            old_version = ParseFile(path_old);
+        QString path = QCoreApplication::applicationDirPath();
+        path += "/";
+        path += inf_file;
+        if ( CheckFile(path) )
+            new_version = ParseFile(path);
 
-        QString path_new = QCoreApplication::applicationDirPath();
-        path_new += new_inf;
-        if ( CheckFile(path_new) )
-            new_version = ParseFile(path_new);
-
-        if ( CompareVersions(old_version, new_version) )
+        if ( CompareVersions(new_version.at(0)) )
         {
 
+            sigUpdateOrReject();
 
         }
         else
         {
-            DownloadAnyFile(url_app_file);
-            //QFile(path_new).setPermissions(QFile::ReadOwner | QFile::WriteOwner);
-            //QFile(path_new).remove();
+
+            //sigRejectDownload();
+
         }
-
     }
-    else if ( file_name == "viewaide-win-setup_new.exe" )
+    else if ( file_name == "viewaide-win-setup.exe" )
     {
-        QStringList args;
-        args << "Update" << new_version.at(0) << new_version.at(1);
-        QProcess::startDetached("Viewaide.exe", args);
+        #ifdef Q_OS_WIN
+            int result = (int)::ShellExecuteA(0, "open", file_name.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
+            if (SE_ERR_ACCESSDENIED == result)
+            {
+                // Requesting elevation
+                result = (int)::ShellExecuteA(0, "runas", file_name.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
+            }
+            if (result <= 32)
+            {
+                // error handling
+            }
+        #else
+            if (!QProcess::startDetached(file_name))
+            {
+                // error handling
+            }
+        #endif
         qApp->exit();
-//        DeleteOldFile("Viewaide.exe");
-//        DeleteOldFile("Update.inf");
-//        RenameNewFile("Viewaide_new.exe","Viewaide.exe");
-//        RenameNewFile("Update_new.inf","Update.inf");
     }
-
-
 }
 
 QStringList UpdateApp::ParseFile(const QString& path_file)
 {
-
     reg_exp.setMinimal(true);
-
     QStringList parsed_file;
     QString str;
-
     QFile file ( path_file );
     file.open(QIODevice::ReadOnly);
 
@@ -131,7 +134,6 @@ QStringList UpdateApp::ParseFile(const QString& path_file)
         }
     }
     file.close();
-
     return parsed_file;
 }
 

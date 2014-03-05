@@ -7,5 +7,6 @@ SpecialThread::SpecialThread( Main_window* m_w )
 
 void SpecialThread::run()
 {
-    main_w->slotMakePause();
+    if ( !main_w->block_popup_msg)
+        main_w->slotMakePause();
 }

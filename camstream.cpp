@@ -2,9 +2,13 @@
 
 QFile CamStream::log_file;
 QTextStream CamStream::log;
+bool CamStream::is_popup_showed = true;
+
 
 CamStream::CamStream()
 {
+    //
+
     capture=0;
 
     // system bool
@@ -802,8 +806,7 @@ void CamStream::SaveCurFaceKoeffs()
 
 void CamStream::run()
 {
-//    if(UpdateApp::require_upd)
-//        emit sigCheckUpdate();
+
 
     emit UnlockCam();
     log<<"Thread is running"<<"\n";
@@ -861,6 +864,16 @@ void CamStream::run()
 //    CvVideoWriter* writer_alert = cvCreateVideoWriter(filename_alert, CV_FOURCC('D','I','V','X'), 7, size, 1);
 
     /////////////////////////////////////////////////
+
+    while(true)
+    {
+        QThread::msleep(3000);
+        if ( !is_popup_showed )
+        {
+            emit sigCheckUpdate();
+            break;
+        }
+    }
 
 
     while((!stop_thread))

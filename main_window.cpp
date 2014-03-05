@@ -6,14 +6,19 @@ bool Main_window::cam_busy = false;
 int Main_window::calibration_numb = 0;
 int Main_window::numb_fails = 0;
 int Main_window::calibration_seconds = 0;
+bool Main_window::block_popup_msg = false;
 const int Main_window::max_numb_fails = 10;
 const int Main_window::notif_pause = 3000;
+
 
 Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
      ui_2(new Ui::Form), stream ( str )
 {
     ui->setupUi(this);
     ui_2->setupUi(this);
+
+    ui_2->btn_accept->hide();
+    ui_2->btn_notnow->hide();
 
     this->setWindowFlags(Qt::FramelessWindowHint);
     this->setWindowTitle("Viewaide");
@@ -32,10 +37,11 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
     act_window = menu->addAction(tr("Show"));
     act_options = menu->addAction(tr("Options"));
     act_calibrate = menu->addAction(tr("Calibrate"));
+    act_logout = menu->addAction(tr("Logout"));
     act_exit = menu->addAction(tr("Exit"));
     tray->setContextMenu(menu);
 
-    ui->btn_minimize->setParent(ui->lbl_title);
+    //ui->btn_minimize->setParent(ui->lbl_title);
     ui->btn_close->setParent(ui->lbl_title);
 
     ui->lbl_background->setParent(ui->lbl_video);
@@ -117,6 +123,7 @@ void Main_window::changeTranslator(QString postfix)
 
 void Main_window::slotRunGuiCalibrate()
 {
+    slotSetDefaultWnd();
     ui_2->label_7->setText(tr("Notifications\nwill be here"));
     emit sigAlertOff();
     emit sigShowNextTuneup();
@@ -251,6 +258,7 @@ void Main_window::changeEvent(QEvent * event)
         act_window->setText(tr("Show"));
         act_options->setText(tr("Options"));
         act_calibrate->setText(tr("Calibrate"));
+        act_logout->setText(tr("Logout"));
         act_exit->setText(tr("Exit"));
         ui_2->lbl_language->setText(tr("Language"));
         ui_2->lbl_notif->setText(tr("Notifications"));
@@ -358,13 +366,21 @@ void Main_window::SetNotifGeom()
 
 void Main_window::slotNotifOpen()
 {
-    anim_come_out->start();
+    CamStream::is_popup_showed = true;
+    anim_come_out->start();    
 }
 
 void Main_window::slotNotifClose()
 {
     anim_come_in->start();
     InitNotifAnim();
+    CamStream::is_popup_showed = false;
+
+
+    ui_2->btn_accept->hide();
+    ui_2->btn_notnow->hide();
+
+
 }
 
 void Main_window::slotMakePause()
@@ -375,108 +391,195 @@ void Main_window::slotMakePause()
 
 void Main_window::slotEyesBlink()
 {
-    if ( ui_2->checkb_visual->isChecked() )
+    if ( !block_popup_msg )
     {
-        ui_2->label_7->setText(tr("Attention!\nBlink more"));
-        ui_2->widget->show();
-        slotNotifOpen();
-    }
+        if ( ui_2->checkb_visual->isChecked() )
+        {
+            ui_2->label_7->setText(tr("Attention!\nBlink more"));
+            ui_2->widget->show();
+            slotNotifOpen();
+        }
 
-    if ( ui_2->checkb_voice->isChecked() )
-    {
-        sound->setLoops(1);
-        if ( sound->isFinished() )
-            sound->play();
+        if ( ui_2->checkb_voice->isChecked() )
+        {
+            sound->setLoops(1);
+            if ( sound->isFinished() )
+                sound->play();
+        }
     }
 }
 
 void Main_window::slotBadLightness()
 {
-    if ( ui_2->checkb_visual->isChecked() )
+    if ( !block_popup_msg )
     {
-        ui_2->label_7->setText(tr("Attention!\nBad lighting"));
-        ui_2->widget->show();
-        slotNotifOpen();
-    }
+        if ( ui_2->checkb_visual->isChecked() )
+        {
+            ui_2->label_7->setText(tr("Attention!\nBad lighting"));
+            ui_2->widget->show();
+            slotNotifOpen();
+        }
 
-    if ( ui_2->checkb_voice->isChecked() )
-    {
-        sound->setLoops(1);
-        if ( sound->isFinished() )
-            sound->play();
+        if ( ui_2->checkb_voice->isChecked() )
+        {
+            sound->setLoops(1);
+            if ( sound->isFinished() )
+                sound->play();
+        }
     }
 }
 
 void Main_window::slotFirstMsg()
 {
+    ui_2->label_7->setText(tr("Notifications\nwill be here"));
     tray->showMessage( tr("Viewaide"), tr("Successfully launched!"), QSystemTrayIcon::Information, 1000);
+}
+
+void Main_window::slotDrawUpdWnd()
+{
+    slotBlockPopupMsg(true);
+    ui_2->btn_accept->show();
+    ui_2->btn_notnow->show();
+
+    ui_2->label_7->setText(tr("The new version is available\nUpgrade now?"));
+    ui_2->btn_options->hide();
+    ui_2->label_7->setStyleSheet("font-size: 16px;"
+                                "font-family: Verdana;"
+                                "text-align: center;"
+                                "color: white;"
+                                "background-color: rgb(204, 85, 0, 0);");
+
+
+    ui_2->label->setStyleSheet("font-size: 16px;"
+                               "font-family: Verdana;"
+                               "text-align: center;"
+                               "color: white;"
+                               "background-color: rgb(204, 85, 0, 200);");
+    ui_2->widget->show();
+    slotNotifOpen();
+}
+
+void Main_window::slotBlockPopupMsg(bool show_msg)
+{
+    block_popup_msg = show_msg;
+}
+
+void Main_window::slotSetDefaultWnd()
+{
+    if ( !block_popup_msg )
+    {
+        ui_2->btn_options->show();
+        ui_2->label_7->setStyleSheet("font-size: 20px;"
+                                    "font-family: Verdana;"
+                                    "text-align: center;"
+                                    "color: white;"
+                                    "background-color: rgb(74, 98, 101,0);");
+
+
+        ui_2->label->setStyleSheet("font-size: 20px;"
+                                   "font-family: Verdana;"
+                                   "text-align: center;"
+                                   "color: white;"
+                                   "background-color: rgb(74, 98, 101,200);");      
+    }
+}
+
+void Main_window::slotWhatModeRun()
+{
+    if ( CheckOptions() )
+        this->sigRunFirstTray();
+    else
+        this->sigRunGuiCalibrate();
+    stream->start();
+}
+
+bool Main_window::CheckOptions()
+{
+    QString path = QCoreApplication::applicationDirPath();
+    path += "//options.txt";
+    QFile file ( path );
+    if ( !file.open(QIODevice::ReadOnly) )
+        return 0;
+    return 1;
 }
 
 void Main_window::SquintAlert()
 {
-    if ( ui_2->checkb_visual->isChecked() )
+    if ( !block_popup_msg )
     {
-        ui_2->label_7->setText(tr("Attention!\nOften squint"));
-        ui_2->widget->show();
-        slotNotifOpen();
-    }
+        if ( ui_2->checkb_visual->isChecked() )
+        {
+            ui_2->label_7->setText(tr("Attention!\nOften squint"));
+            ui_2->widget->show();
+            slotNotifOpen();
+        }
 
-    if ( ui_2->checkb_voice->isChecked() )
-    {
-        sound->setLoops(1);
-        if ( sound->isFinished() )
-            sound->play();
+        if ( ui_2->checkb_voice->isChecked() )
+        {
+            sound->setLoops(1);
+            if ( sound->isFinished() )
+                sound->play();
+        }
     }
 }
 
 void Main_window::TooNearAlert()
 {
-    if ( ui_2->checkb_visual->isChecked() )
+    if ( !block_popup_msg )
     {
-        ui_2->label_7->setText(tr("Attention!\nToo close"));
-        ui_2->widget->show();
-        slotNotifOpen();
-    }
+        if ( ui_2->checkb_visual->isChecked() )
+        {
+            ui_2->label_7->setText(tr("Attention!\nToo close"));
+            ui_2->widget->show();
+            slotNotifOpen();
+        }
 
-    if ( ui_2->checkb_voice->isChecked() )
-    {
-        sound->setLoops(1);
-        if ( sound->isFinished() )
-            sound->play();
+        if ( ui_2->checkb_voice->isChecked() )
+        {
+            sound->setLoops(1);
+            if ( sound->isFinished() )
+                sound->play();
+        }
     }
 }
 
 void Main_window::TooLowAlert()
 {
-    if ( ui_2->checkb_visual->isChecked() )
+    if ( !block_popup_msg )
     {
-        ui_2->label_7->setText(tr("Attention!\nToo low, sit up"));
-        ui_2->widget->show();
-        slotNotifOpen();
-    }
+        if ( ui_2->checkb_visual->isChecked() )
+        {
+            ui_2->label_7->setText(tr("Attention!\nToo low, sit up"));
+            ui_2->widget->show();
+            slotNotifOpen();
+        }
 
-    if ( ui_2->checkb_voice->isChecked() )
-    {
-        sound->setLoops(1);
-        if ( sound->isFinished() )
-            sound->play();
+        if ( ui_2->checkb_voice->isChecked() )
+        {
+            sound->setLoops(1);
+            if ( sound->isFinished() )
+                sound->play();
+        }
     }
 
 }
 void Main_window::TooHeighAlert()
 {
-    if ( ui_2->checkb_visual->isChecked() )
+    if ( !block_popup_msg )
     {
-        ui_2->label_7->setText(tr("Attention!\nToo high, sit lower"));
-        ui_2->widget->show();
-        slotNotifOpen();
-    }
+        if ( ui_2->checkb_visual->isChecked() )
+        {
+            ui_2->label_7->setText(tr("Attention!\nToo high, sit lower"));
+            ui_2->widget->show();
+            slotNotifOpen();
+        }
 
-    if ( ui_2->checkb_voice->isChecked() )
-    {
-        sound->setLoops(1);
-        if ( sound->isFinished() )
-            sound->play();
+        if ( ui_2->checkb_voice->isChecked() )
+        {
+            sound->setLoops(1);
+            if ( sound->isFinished() )
+                sound->play();
+        }
     }
 }
 
