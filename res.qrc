@@ -8,8 +8,8 @@
         <file>res/pbar2.png</file>
         <file>res/pbar3.png</file>
         <file>res/sound.wav</file>
-        <file>res/Viewaide_ru.qm</file>
         <file>res/x.png</file>
         <file>res/logo_login.png</file>
+        <file>res/Viewaide_ru.qm</file>
     </qresource>
 </RCC>

@@ -24,10 +24,22 @@ int main(int argc, char *argv[])
 
     reg_and_log.show();
 
+    QObject::connect(m_w.ui_2->cmb_webcam, SIGNAL(currentIndexChanged(int)), stream, SLOT(slotSaveSettings(int)) );
+    QObject::connect(m_w.ui_2->cmb_lang, SIGNAL(currentIndexChanged(int)), stream, SLOT(slotSaveSettings(int)) );
+    QObject::connect(m_w.ui_2->checkb_autorun, SIGNAL(stateChanged(int)), stream, SLOT(slotSaveSettings(int)));
+    QObject::connect(m_w.ui_2->checkb_visual, SIGNAL(stateChanged(int)), stream, SLOT(slotSaveSettings(int)));
+    QObject::connect(m_w.ui_2->checkb_voice, SIGNAL(stateChanged(int)), stream, SLOT(slotSaveSettings(int)));
+
+
+    QObject::connect(m_w.ui_2->checkb_autorun, SIGNAL(toggled(bool)), stream, SLOT(slotAutoRun(bool)));
+
+    QObject::connect(m_w.ui_2->btn_accept, SIGNAL(clicked()), &m_w, SLOT(slotTellAboutDownloading()));
+    QObject::connect(m_w.ui_2->btn_accept, SIGNAL(clicked()), &s_t, SLOT(start()) );
+
     QObject::connect(m_w.ui_2->btn_accept, SIGNAL(clicked()), &upd_app, SLOT(slotAcceptDownload()));
     QObject::connect(m_w.ui_2->btn_notnow, SIGNAL(clicked()), &upd_app, SLOT(slotRejectDownload()));
 
-    QObject::connect(m_w.ui_2->btn_accept, SIGNAL(clicked()), &m_w, SLOT(slotNotifClose()));
+   // QObject::connect(m_w.ui_2->btn_accept, SIGNAL(clicked()), &m_w, SLOT(slotNotifClose()));
     QObject::connect(m_w.ui_2->btn_notnow, SIGNAL(clicked()), &m_w, SLOT(slotNotifClose()));
 
     QObject::connect(m_w.ui_2->btn_notnow, SIGNAL(clicked(bool)), &m_w, SLOT(slotBlockPopupMsg(bool)));
@@ -35,8 +47,8 @@ int main(int argc, char *argv[])
 
     QObject::connect(&upd_app, SIGNAL(sigUpdateOrReject()), &m_w, SLOT(slotDrawUpdWnd()), Qt::QueuedConnection);
 
-    QObject::connect(&upd_app, SIGNAL(sigRejectDownload()), &upd_app, SLOT(slotRejectDownload()));
-    QObject::connect(&upd_app, SIGNAL(sigAcceptDownload()), &upd_app, SLOT(slotAcceptDownload()));
+    //QObject::connect(&upd_app, SIGNAL(sigRejectDownload()), &upd_app, SLOT(slotRejectDownload()));
+    //QObject::connect(&upd_app, SIGNAL(sigAcceptDownload()), &upd_app, SLOT(slotAcceptDownload()));
 
     QObject::connect(m_w.ui_2->btn_check_update, SIGNAL(clicked()), &upd_app, SLOT(slotCheckUpdate()));
 
@@ -72,12 +84,13 @@ int main(int argc, char *argv[])
     //QObject::connect(m_w.act_window, SIGNAL(triggered()), m_w.tray, SLOT(hide()) );
     QObject::connect(m_w.act_window, SIGNAL(triggered()), m_w.ui_2->widget_3, SLOT(show()));
 
-
+    QObject::connect(m_w.act_pause, SIGNAL(triggered()), &m_w, SLOT(slotToStopOrResume()));
 
     QObject::connect(m_w.act_logout, SIGNAL(triggered()), &reg_and_log, SLOT(slotLogout()));
     QObject::connect(m_w.act_logout, SIGNAL(triggered()), m_w.ui_2->widget_3, SLOT(hide()));
     QObject::connect(m_w.act_logout, SIGNAL(triggered()), &reg_and_log, SLOT(slotRepeatConnect()));
     QObject::connect(m_w.act_logout, SIGNAL(triggered()), &reg_and_log, SLOT(show()));
+    QObject::connect(m_w.act_logout, SIGNAL(triggered()), stream, SLOT(stop()));
 
 
 
@@ -161,6 +174,7 @@ int main(int argc, char *argv[])
     QObject::connect(stream, SIGNAL(CheckCalibration(bool)), &m_w, SLOT(slotReceiveInfo(bool)) );
 
     QObject::connect(&reg_and_log, SIGNAL(sigRunMainProgram()), &m_w, SLOT(slotWhatModeRun()) );
+    QObject::connect(&reg_and_log, SIGNAL(sigRunMainProgram()), &m_w, SLOT(slotSetSettings()) );
 
     return a.exec();
 }
