@@ -35,6 +35,7 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
 
     menu = new QMenu(this);
     act_window = menu->addAction(tr("Show"));
+    act_pause = menu->addAction(tr("Pause"));
     act_options = menu->addAction(tr("Options"));
     act_calibrate = menu->addAction(tr("Calibrate"));
     act_logout = menu->addAction(tr("Logout"));
@@ -75,7 +76,6 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
 
     InitNotifAnim();
     SetNotifGeom();
-
     sound = new QSound ( ":/res/sound.wav", this );
 
 }
@@ -256,6 +256,7 @@ void Main_window::changeEvent(QEvent * event)
     if ( event->type() == QEvent::LanguageChange )
     {
         act_window->setText(tr("Show"));
+        act_pause->setText(tr("Pause"));
         act_options->setText(tr("Options"));
         act_calibrate->setText(tr("Calibrate"));
         act_logout->setText(tr("Logout"));
@@ -267,6 +268,25 @@ void Main_window::changeEvent(QEvent * event)
         ui_2->checkb_voice->setText(tr("Sound"));
         ui_2->label_3->setText(tr("Setup is complete"));
         ui_2->btn_start->setText(tr("Launch"));
+        ui_2->btn_accept->setText(tr("Update"));
+        ui_2->btn_notnow->setText(tr("Later"));
+        ui_2->btn_check_update->setText(tr("Check update"));
+        ui_2->checkb_autorun->setText(tr("Autorun"));
+//        ui_3->checkBox->setText(tr("I agree with"));
+//        ui_3->lineEdit->setPlaceholderText(tr("Your e-mail"));
+//        ui_3->lineEdit_2->setPlaceholderText(tr("Password"));
+//        ui_3->lineEdit_3->setPlaceholderText(tr("First name"));
+//        ui_3->lineEdit_4->setPlaceholderText(tr("Last name"));
+//        ui_3->lineEdit_5->setPlaceholderText(tr("Your e-mail"));
+//        ui_3->lineEdit_6->setPlaceholderText(tr("Password"));
+//        ui_3->pushButton->setText(tr("Log in"));
+//        ui_3->pushButton_2->setText(tr("Registration"));
+//        ui_3->pushButton_3->setText(tr("Can not log in?"));
+//        ui_3->pushButton_4->setText(tr("Log in"));
+//        ui_3->pushButton_5->setText(tr("Registration"));
+//        ui_3->pushButton_6->setText(tr("Help with registration"));
+//        ui_3->pushButton_7->setText(tr("Retry"));
+//        ui_3->pushButton_8->setText(tr("Terms"));
 
     }
     else
@@ -280,10 +300,11 @@ void Main_window::slotChangeCam(int numb_of_cam )
 
 void Main_window::slotBusyCam()
 {
+    slotSetDefaultWnd();
+    if ( !block_popup_msg )
+        ui_2->label_7->setText(tr("Web-cam is busy"));
     ui->lbl_video->setText(tr("Web-cam is busy"));
     ui_2->lbl_video->setText(tr("Web-cam is busy"));
-    ui_2->label_7->setText(tr("Web-cam is busy"));
-
 }
 
 void Main_window::slotPopupMenu()
@@ -296,7 +317,9 @@ void Main_window::slotUnlockCam()
 {
     ui->lbl_video->setText("");
     ui_2->lbl_video->setText("");
-    ui_2->label_7->setText(tr("Notifications\nwill be here"));
+    slotSetDefaultWnd();
+    if ( !block_popup_msg )
+        ui_2->label_7->setText(tr("Notifications\nwill be here"));
     cam_busy = false;
 }
 
@@ -380,7 +403,6 @@ void Main_window::slotNotifClose()
     ui_2->btn_accept->hide();
     ui_2->btn_notnow->hide();
 
-
 }
 
 void Main_window::slotMakePause()
@@ -440,7 +462,7 @@ void Main_window::slotDrawUpdWnd()
     slotBlockPopupMsg(true);
     ui_2->btn_accept->show();
     ui_2->btn_notnow->show();
-
+    ui_2->label_7->setGeometry(0,5,250,61);
     ui_2->label_7->setText(tr("The new version is available\nUpgrade now?"));
     ui_2->btn_options->hide();
     ui_2->label_7->setStyleSheet("font-size: 16px;"
@@ -469,6 +491,7 @@ void Main_window::slotSetDefaultWnd()
     if ( !block_popup_msg )
     {
         ui_2->btn_options->show();
+        ui_2->label_7->setGeometry(0,10,250,61);
         ui_2->label_7->setStyleSheet("font-size: 20px;"
                                     "font-family: Verdana;"
                                     "text-align: center;"
@@ -491,6 +514,67 @@ void Main_window::slotWhatModeRun()
     else
         this->sigRunGuiCalibrate();
     stream->start();
+}
+
+void Main_window::slotToStopOrResume()
+{
+    if ( menu->actions().at(1)->text() == "Pause" )
+    {
+        stream->stop();
+        stream->wait();
+        menu->actions().at(1)->setText("Resume");
+        this->slotBusyCam();
+    }
+    else if ( menu->actions().at(1)->text() == "Resume" )
+    {
+        menu->actions().at(1)->setText("Pause");
+        stream->start();
+    }
+}
+
+void Main_window::slotTellAboutDownloading()
+{
+    slotBlockPopupMsg(false);
+    ui_2->btn_accept->hide();
+    ui_2->btn_notnow->hide();
+    ui_2->label_7->setGeometry(0,10,250,61);
+    ui_2->label_7->setText("Downloading...\nPlease, wait");
+}
+
+void Main_window::slotSetSettings()
+{
+    QFile file("settings.ini");
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    while ( !file.atEnd() )
+    {
+        QString str = file.readLine();
+        if ( str.startsWith("cmb_lang") )
+        {
+            str = file.readLine();
+            ui_2->cmb_lang->setCurrentIndex(str.toInt());
+        }
+        else if ( str.startsWith("cmb_webcam") )
+        {
+            str = file.readLine();
+            ui_2->cmb_webcam->setCurrentIndex(str.toInt());
+        }
+        else if ( str.startsWith("checkb_visual") )
+        {
+            str = file.readLine();
+            ui_2->checkb_voice->setChecked(str.toInt());
+        }
+        else if ( str.startsWith("checkb_voice") )
+        {
+            str = file.readLine();
+            ui_2->checkb_visual->setChecked(str.toInt());
+        }
+        else if ( str.startsWith("checkb_autorun") )
+        {
+            str = file.readLine();
+            ui_2->checkb_autorun->setChecked(str.toInt());
+        }
+    }
+
 }
 
 bool Main_window::CheckOptions()

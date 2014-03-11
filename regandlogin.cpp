@@ -27,7 +27,7 @@ RegAndLogIn::RegAndLogIn(QWidget *parent) :
     ui->checkBox->hide();
     ui->label->hide();
     ui->label_2->hide();
-    this->setWindowTitle("Viewaide");
+    this->setWindowTitle(tr("Viewaide"));
     this->setFixedSize(318,475);
     QPalette pal = this->palette();
     pal.setColor(QPalette::Window, QColor::fromRgb(45,64,71));
@@ -386,19 +386,19 @@ void RegAndLogIn::slotLogout()
 
 void RegAndLogIn::notInputToApp()
 {
-    ui->label->setText("Неверный логин или пароль!");
+    ui->label->setText(tr("Invalid username or password!"));
     ui->label->show();
 }
 
 void RegAndLogIn::dataAcceptedOnServ()
 {
-    ui->label_2->setText("Вы успешно зарегистрировались!\nНа почту было выслано письмо для подтверждения регистрации.");
+    ui->label_2->setText(tr("You have successfully registered!\nThe mail has been sent to confirm your registration."));
     ui->label_2->show();
 }
 
 void RegAndLogIn::dataNotAcceptedOnServ()
 {
-    ui->label_2->setText("В ходе регистрации произошла ошибка!\nПроверьте введенные данные и повторите попытку!");
+    ui->label_2->setText(tr("During registration, an error occurred!\nCheck your entries and try again!"));
     ui->label_2->show();
 }
 
@@ -417,7 +417,7 @@ void RegAndLogIn::hideLogin()
     ui->lineEdit_2->setStyleSheet("background-color:rgb(255,255,255);"
                                 "border: 2px solid rgb(17,164,192);"
                                 "border-radius: 5px;padding: 0 4px;");
-    ui->label->setText("Нет соединения с сервером!\nПроверьте подключение!");
+    ui->label->setText(tr("No connection to the server!\nCheck connection!"));
     ui->label->show();
     ui->pushButton_7->show();
 }
@@ -448,7 +448,7 @@ void RegAndLogIn::hideReg()
     ui->lineEdit_6->setStyleSheet("background-color:rgb(255,255,255);"
                                 "border: 2px solid rgb(17,164,192);"
                                 "border-radius: 5px;padding: 0 4px;");
-    ui->label->setText("Нет соединения с сервером!\nПроверьте подключение!");
+    ui->label->setText(tr("No connection to the server!\nCheck connection!"));
     ui->label->show();
     ui->pushButton_7->show();
 }

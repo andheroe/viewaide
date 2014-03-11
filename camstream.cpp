@@ -175,6 +175,95 @@ void CamStream::pause()
     while(!thread_is_paused)QThread::msleep(1);;
 }
 
+void CamStream::slotAutoRun( bool active )
+{
+    #ifdef Q_OS_WIN
+//    QSettings *autorun = new QSettings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",QSettings::NativeFormat);
+//    if ( active )
+//    {
+//        autorun->setValue("Viewaide", QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
+//        autorun->sync();
+//        //autoRun->setToolTip("Отключить автозагрузку");
+//    }
+//    else
+//    {
+//        autorun->remove("Viewaide");
+//        //autoRun->setToolTip("Включить автозагрузку");
+//    }
+//    delete autorun;
+    #endif
+    #ifdef Q_OS_MAC
+    if ( active )
+    {
+        QSettings setting(QDir::homePath() + QDir::separator() + "Library/Preferences/loginwindow.plist",QSettings::NativeFormat);
+
+        QDir dir(QCoreApplication::applicationDirPath());
+        dir.cdUp();
+        dir.cdUp();
+
+        QVariantList lst = qvariant_cast<QVariantList >(setting.value("AutoLaunchedApplicationDictionary"));
+        bool exist = false;
+        for (int i = 0; i < lst.count(); ++i)
+        {
+            QVariantMap prop = qvariant_cast<QVariantMap >(lst[i]);
+            if (prop["Path"] == dir.absolutePath())
+            {
+                exist = true;
+                break;
+            }
+        }
+
+        if (exist == false)
+        {
+            QVariantMap v;
+            v["Path"] = dir.absolutePath();
+            v["Hidden"] = false;
+            lst.append(v);
+            setting.setValue("AutoLaunchedApplicationDictionary",lst);
+        }
+    }
+    else
+    {
+
+
+    }
+#endif
+}
+
+void CamStream::slotSaveSettings(int state)
+{
+    QString sender_name = QObject::sender()->objectName();
+    SaveSettings("settings.ini", sender_name, state);
+}
+
+void CamStream::SaveSettings(QString filename, QString sender_name, int state)
+{
+    QFile file(filename);
+    file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Append);
+    file.seek(0);
+    while ( !file.atEnd() )
+    {
+        QString str = file.readLine();
+        QString line;
+        line.push_back(QString::number(state));
+
+        if ( str.startsWith(sender_name) )
+        {
+            str.clear();
+            str.insert(0, line.toLower());
+            file.write(str.toUtf8());
+            break;
+        }
+    }
+    if ( file.atEnd() )
+    {
+        QTextStream file_stream;
+        file_stream.setDevice(&file);
+        file_stream << sender_name << endl << state << endl;
+    }
+    file.close();
+}
+
 void CamStream::resume()
 {
     log<<"Try to resume the thread"<<"\n";
@@ -867,7 +956,7 @@ void CamStream::run()
 
     while(true)
     {
-        QThread::msleep(3000);
+        QThread::msleep(5000);
         if ( !is_popup_showed )
         {
             emit sigCheckUpdate();
