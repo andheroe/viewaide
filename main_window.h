@@ -51,8 +51,10 @@ public:
     const static int notif_pause;
 
     QAction* act_window;
+    QAction* act_pause;
     QAction* act_options;
     QAction* act_calibrate;
+    QAction* act_feedback;
     QAction* act_logout;
     QAction* act_exit;
 
@@ -158,6 +160,13 @@ public slots:
     void slotSetDefaultWnd();
 
     void slotWhatModeRun();
+
+    void slotToStopOrResume();
+
+    void slotTellAboutDownloading();
+
+    void slotSetSettings();
+    void slotSendFeedback();
 
 signals:
     void sigSendCalibStage(calibration_stages stage);

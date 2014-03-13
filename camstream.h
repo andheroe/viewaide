@@ -8,6 +8,8 @@
 #include <QStringList>
 #include <QFile>
 #include <QDate>
+#include <QSettings>
+#include <QDir>
 
 #ifdef Q_OS_WIN
 #include "videoInput.h"
@@ -270,6 +272,8 @@ public:
 
     void SaveCurFaceKoeffs();
 
+    void SaveSettings(QString filename, QString sender_name, int state);
+
 signals:
     void ImageIsReady(QImage qimg);
     void OldImageIsReady(QImage qimg);
@@ -294,6 +298,8 @@ public slots:
     void resume();
     void stop();
     void pause();
+    void slotAutoRun(bool active);
+    void slotSaveSettings(int state);
 };
 
 #endif // CAMSTREAM_H

@@ -145,7 +145,17 @@ CamStream::CamStream()
     left_eye_is_found=false;
     right_eye_is_found=false;
 
-    log_file.setFileName("log_camstream.txt");
+    QString path_to_dir = QDir::homePath();
+    path_to_dir += "/Viewaide";
+    QDir dir(path_to_dir);
+    if (!dir.exists())
+        dir.mkpath(path_to_dir);
+
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += "log_camstream.txt";
+
+    log_file.setFileName(path_to_file);
     log_file.open(QIODevice::WriteOnly | QIODevice::Text);
     log.setDevice(&log_file);
 
@@ -173,6 +183,98 @@ void CamStream::pause()
     pause_thread=true;
 
     while(!thread_is_paused)QThread::msleep(1);;
+}
+
+void CamStream::slotAutoRun( bool active )
+{
+    #ifdef Q_OS_WIN
+    QSettings *autorun = new QSettings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",QSettings::NativeFormat);
+    if ( active )
+    {
+        autorun->setValue("Viewaide", QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
+        autorun->sync();
+        //autoRun->setToolTip(tr("Disable autorun"));
+    }
+    else
+    {
+        autorun->remove("Viewaide");
+        //autoRun->setToolTip(tr("Enable autorun"));
+    }
+    delete autorun;
+    #endif
+    #ifdef Q_OS_MAC
+    if ( active )
+    {
+        QSettings setting(QDir::homePath() + QDir::separator() + "Library/Preferences/loginwindow.plist",QSettings::NativeFormat);
+
+        QDir dir(QCoreApplication::applicationDirPath());
+        dir.cdUp();
+        dir.cdUp();
+
+        QVariantList lst = qvariant_cast<QVariantList >(setting.value("AutoLaunchedApplicationDictionary"));
+        bool exist = false;
+        for (int i = 0; i < lst.count(); ++i)
+        {
+            QVariantMap prop = qvariant_cast<QVariantMap >(lst[i]);
+            if (prop["Path"] == dir.absolutePath())
+            {
+                exist = true;
+                break;
+            }
+        }
+
+        if (exist == false)
+        {
+            QVariantMap v;
+            v["Path"] = dir.absolutePath();
+            v["Hidden"] = false;
+            lst.append(v);
+            setting.setValue("AutoLaunchedApplicationDictionary",lst);
+        }
+    }
+    else
+    {
+
+
+    }
+#endif
+}
+
+void CamStream::slotSaveSettings(int state)
+{
+    QString sender_name = QObject::sender()->objectName();
+    SaveSettings("settings.ini", sender_name, state);
+}
+
+void CamStream::SaveSettings(QString filename, QString sender_name, int state)
+{
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += filename;
+    QFile file(path_to_file);
+    file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Append);
+    file.seek(0);
+    while ( !file.atEnd() )
+    {
+        QString str = file.readLine();
+        QString line;
+        line.push_back(QString::number(state));
+
+        if ( str.startsWith(sender_name) )
+        {
+            str.clear();
+            str.insert(0, line.toLower());
+            file.write(str.toUtf8());
+            break;
+        }
+    }
+    if ( file.atEnd() )
+    {
+        QTextStream file_stream;
+        file_stream.setDevice(&file);
+        file_stream << sender_name << endl << state << endl;
+    }
+    file.close();
 }
 
 void CamStream::resume()
@@ -831,10 +933,11 @@ void CamStream::run()
     stop_thread=false;
 
 
-    QString path = QCoreApplication::applicationDirPath();
-    path += "//options.txt";
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += "options.txt";
 
-    LoadOptions(path);
+    LoadOptions(path_to_file);
 
     if (!(capture=cvCaptureFromCAM(cam_index)))
     {
@@ -885,7 +988,7 @@ void CamStream::run()
 
     while(true)
     {
-        QThread::msleep(3000);
+        QThread::msleep(5000);
         if ( !is_popup_showed )
         {
             emit sigCheckUpdate();
@@ -946,7 +1049,7 @@ void CamStream::run()
         if(false_eyes_count<=0)
         {
             face_is_found=false;
-            face=Find(FACE,frame,face_is_found);
+            face=Find(FACE,frame,face_is_found,0,0.5);
 
             face_refreshed=true;
         }
@@ -962,7 +1065,7 @@ void CamStream::run()
                     left_eye_area=ClarifyArea(LEFT_EYE,&face);
                 else
                     ExpandArea(left_eye_area,expand_koeff);
-                temp=Find(LEFT_EYE,frame,left_eye_is_found,&left_eye_area,0.5);
+                temp=Find(LEFT_EYE,frame,left_eye_is_found,&left_eye_area);
                 if(left_eye_is_found)
                     left_eye=temp;
 
@@ -971,7 +1074,7 @@ void CamStream::run()
                     right_eye_area=ClarifyArea(RIGHT_EYE,&face);
                 else
                     ExpandArea(right_eye_area,expand_koeff);
-                temp=Find(RIGHT_EYE,frame,right_eye_is_found,&right_eye_area,0.5);
+                temp=Find(RIGHT_EYE,frame,right_eye_is_found,&right_eye_area);
                 if(right_eye_is_found)
                     right_eye=temp;
             }
@@ -1054,9 +1157,10 @@ void CamStream::run()
                     calibration_mode_on=false;
                     qDebug()<<"Calibration: OK";
 
-                    QString path = QCoreApplication::applicationDirPath();
-                    path += "//options.txt";
-                    SaveOptions(path);
+                    QString path_to_file = QDir::homePath();
+                    path_to_file += "/Viewaide/";
+                    path_to_file += "options.txt";
+                    SaveOptions(path_to_file);
                     options_cur=options_new;
 
                     calibration_dist_sum = 0;
@@ -1188,9 +1292,10 @@ void CamStream::run()
 
         if(alert_iteration_count>=alert_iterations_for_statistics)
         {
-            QString s_path = QCoreApplication::applicationDirPath();
-            s_path += "//statistics.txt";
-            SaveStatistics(alert_activ_count,s_path);
+            QString path_to_file = QDir::homePath();
+            path_to_file += "/Viewaide/";
+            path_to_file += "statistics.txt";
+            SaveStatistics(alert_activ_count,path_to_file);
 
             alert_iteration_count=0;
 

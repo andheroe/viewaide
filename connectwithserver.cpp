@@ -5,6 +5,7 @@ ConnectWithServer::ConnectWithServer(QObject *parent) :
 {
 }
 
+
 void ConnectWithServer::allVarWithPhoto(QImage img,bool OpenEyes,bool NarrowedEyes,bool CloseEyes,bool NormalDist,bool NearDist,bool NormalHeight,bool Highly,bool Low,bool NormalLight,bool LightToFace,bool BadLight,float dist)
 {
     QString filename;

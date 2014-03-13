@@ -160,7 +160,7 @@ text-align: center;
 color: black;</string>
        </property>
        <property name="text">
-        <string>Accept</string>
+        <string>Update</string>
        </property>
       </widget>
      </item>
@@ -192,7 +192,7 @@ text-align: center;
 color: black;</string>
        </property>
        <property name="text">
-        <string>Not now</string>
+        <string>Later</string>
        </property>
       </widget>
      </item>
@@ -317,7 +317,7 @@ color: white;</string>
      <x>90</x>
      <y>60</y>
      <width>411</width>
-     <height>150</height>
+     <height>191</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -329,7 +329,7 @@ color: white;</string>
       <x>0</x>
       <y>19</y>
       <width>411</width>
-      <height>131</height>
+      <height>171</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -412,7 +412,7 @@ color: white;</string>
       <x>140</x>
       <y>30</y>
       <width>160</width>
-      <height>101</height>
+      <height>71</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -449,25 +449,6 @@ color: white;</string>
      </item>
      <item>
       <widget class="QComboBox" name="cmb_webcam"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_check_update">
-       <property name="minimumSize">
-        <size>
-         <width>75</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font-size: 12px ;
-font-family: &quot;Verdana&quot;;
-text-align: center;
-color: black;</string>
-       </property>
-       <property name="text">
-        <string>Check update</string>
-       </property>
-      </widget>
      </item>
     </layout>
    </widget>
@@ -591,6 +572,56 @@ color: white;</string>
        </property>
        <property name="checked">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>140</y>
+      <width>271</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QCheckBox" name="checkb_autorun">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font-size: 14px ;
+font-family: &quot;Verdana&quot;;
+text-align: center;
+color: white;</string>
+       </property>
+       <property name="text">
+        <string>Autorun</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_check_update">
+       <property name="minimumSize">
+        <size>
+         <width>75</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font-size: 12px ;
+font-family: &quot;Verdana&quot;;
+text-align: center;
+color: black;</string>
+       </property>
+       <property name="text">
+        <string>Check update</string>
        </property>
       </widget>
      </item>

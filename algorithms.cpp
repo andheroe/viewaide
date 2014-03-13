@@ -66,7 +66,7 @@ void DrawDistance(float dist, IplImage *frame)
     else
         if(text.length()<6)
             text+="  ";
-    text+=" sm";
+    text+=" cm";
     CvFont font=cvFont(1);
     cvPutText(frame,text.toStdString().c_str(),cvPoint(frame->width/10-frame->width/20,9*(frame->height/10)),&font,CV_RGB(255,255,255));
 }
@@ -75,41 +75,48 @@ void InitCascades()
 {
     QString path = QCoreApplication::applicationDirPath();
     #ifdef Q_OS_WIN
-    path+="/../../";
+    //path+="/../../";
+    path += "/haarcascade_frontalface_alt_tree.xml";
     #endif
     #ifdef Q_OS_MAC
     path+="/../../../../";
+    path += "Viewaide/haarcascade_frontalface_alt_tree.xml";
     #endif
     #ifdef Q_OS_LINUX
     path+="/../";
-    #endif
     path += "Viewaide/haarcascade_frontalface_alt_tree.xml";
+    #endif
     face_cascade=(CvHaarClassifierCascade*)cvLoad(path.toStdString().c_str(),0,0,0);
 
     path = QCoreApplication::applicationDirPath();
     #ifdef Q_OS_WIN
-    path+="/../../";
+    //path+="/../../";
+    path += "/haarcascade_mcs_lefteye.xml";
     #endif
     #ifdef Q_OS_MAC
     path+="/../../../../";
+    path += "Viewaide/haarcascade_mcs_lefteye.xml";
     #endif
     #ifdef Q_OS_LINUX
     path+="/../";
-    #endif
     path += "Viewaide/haarcascade_mcs_lefteye.xml";
+    #endif
     left_eye_cascade=(CvHaarClassifierCascade*)cvLoad(path.toStdString().c_str(),0,0,0);
 
     path = QCoreApplication::applicationDirPath();
     #ifdef Q_OS_WIN
-    path+="/../../";
+    //path+="/../../";
+    path +="/haarcascade_mcs_righteye.xml";
     #endif
     #ifdef Q_OS_MAC
     path+="/../../../../";
+    path +="Viewaide/haarcascade_mcs_righteye.xml";
     #endif
     #ifdef Q_OS_LINUX
     path+="/../";
-    #endif
     path +="Viewaide/haarcascade_mcs_righteye.xml";
+    #endif
+
     right_eye_cascade=(CvHaarClassifierCascade*)cvLoad(path.toStdString().c_str(),0,0,0);
 }
 
@@ -147,7 +154,7 @@ CvRect Find(OBJECT obj,IplImage* frame,bool &state,CvRect* area,float resize_koe
         if(left_eye_cascade)
         {
             storage=cvCreateMemStorage(0);
-            seq=cvHaarDetectObjects(small_frame,face_cascade,storage,1.2,3,CV_HAAR_DO_CANNY_PRUNING,cvSize(80.*resize_koeff,120.*resize_koeff),cvSize(320.*resize_koeff,480.*resize_koeff));
+            seq=cvHaarDetectObjects(small_frame,face_cascade,storage,1.2,3,CV_HAAR_DO_CANNY_PRUNING,cvSize(80.*resize_koeff,120.*resize_koeff)/*,cvSize(320.*resize_koeff,480.*resize_koeff)*/);
             if(seq->total>0)
             {
                 rect=*((CvRect*)cvGetSeqElem(seq,0));

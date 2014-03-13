@@ -29,9 +29,7 @@ private slots:
     void on_lineEdit_editingFinished();
     void on_lineEdit_5_editingFinished();
     void on_lineEdit_2_editingFinished();
-    void helpIn();
-    void helpReg();
-    void deal();
+
     void isAccCreate();
     void dataAcceptedOnServ();
     void dataNotAcceptedOnServ();
@@ -50,6 +48,9 @@ public slots:
     void notInputToApp();
     void slotRepeatConnect();
     void slotLogout();
+    void helpIn();
+    void helpReg();
+    void deal();
 
 signals:
     void netIsNotWorking();

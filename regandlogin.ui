@@ -36,7 +36,7 @@
      <string notr="true"/>
     </property>
     <property name="text">
-     <string>Вход</string>
+     <string>Log in</string>
     </property>
     <property name="checkable">
      <bool>true</bool>
@@ -76,7 +76,7 @@
 }</string>
     </property>
     <property name="text">
-     <string>Регистрация</string>
+     <string>Registration</string>
     </property>
     <property name="flat">
      <bool>true</bool>
@@ -117,7 +117,7 @@
 </string>
     </property>
     <property name="text">
-     <string>Не удается войти?</string>
+     <string>Can not log in?</string>
     </property>
     <property name="flat">
      <bool>true</bool>
@@ -128,7 +128,7 @@
      <rect>
       <x>30</x>
       <y>440</y>
-      <width>33</width>
+      <width>41</width>
       <height>23</height>
      </rect>
     </property>
@@ -155,7 +155,7 @@
 </string>
     </property>
     <property name="text">
-     <string>Вход</string>
+     <string>Log in</string>
     </property>
     <property name="flat">
      <bool>true</bool>
@@ -171,7 +171,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string/>
     </property>
    </widget>
    <widget class="QCheckBox" name="checkBox">
@@ -197,7 +197,7 @@
 </string>
     </property>
     <property name="text">
-     <string>Я согласен с </string>
+     <string>I agree with</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_5">
@@ -216,7 +216,7 @@
      <string notr="true"/>
     </property>
     <property name="text">
-     <string>Регистрация</string>
+     <string>Registration</string>
     </property>
     <property name="default">
      <bool>true</bool>
@@ -439,7 +439,7 @@ color:white;</string>
 </string>
     </property>
     <property name="text">
-     <string>Помощь с регистрацией</string>
+     <string>Help with registration</string>
     </property>
     <property name="flat">
      <bool>true</bool>
@@ -484,7 +484,7 @@ color:white;</string>
      <string notr="true"/>
     </property>
     <property name="text">
-     <string>Повторить</string>
+     <string>Retry</string>
     </property>
     <property name="checkable">
      <bool>true</bool>
@@ -528,7 +528,54 @@ color:white;</string>
 </string>
     </property>
     <property name="text">
-     <string>Условиями</string>
+     <string>Terms</string>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_9">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>440</y>
+      <width>71</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Calibri</family>
+      <pointsize>9</pointsize>
+      <underline>false</underline>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;You will get your statistics of eye problems, &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;week e-mail reports,&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt; personal eye gymnastics, based on application data.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#pushButton_9
+{
+	color: white;
+}
+
+#pushButton_9:pressed
+{
+	background-color: rgb(45, 64, 71);
+	border:none;
+}
+
+#pushButton_9:hover:!pressed
+{
+    color:rgb(17,164,192);
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Why?</string>
     </property>
     <property name="flat">
      <bool>true</bool>
