@@ -20,6 +20,7 @@ RegAndLogIn::RegAndLogIn(QWidget *parent) :
     ui->pushButton_6->hide();
     ui->pushButton_7->hide();
     ui->pushButton_8->hide();
+    ui->pushButton_9->show();
     ui->lineEdit_3->hide();
     ui->lineEdit_4->hide();
     ui->lineEdit_5->hide();
@@ -42,6 +43,9 @@ RegAndLogIn::RegAndLogIn(QWidget *parent) :
     QValidator *emailValidator = new QRegExpValidator(emailRX, this);
     ui->lineEdit->setValidator(emailValidator);
     ui->lineEdit_5->setValidator(emailValidator);
+
+    on_pushButton_2_clicked();
+
     if(con->netIsWorking()==false)
     {
         emit netIsNotWorking();
@@ -56,6 +60,7 @@ RegAndLogIn::~RegAndLogIn()
 
 void RegAndLogIn::on_pushButton_2_clicked()
 {
+    ui->pushButton_9->show();
     ui->lineEdit->hide();
     ui->lineEdit->setText("");
     ui->lineEdit->setStyleSheet("background-color:rgb(255,255,255);"
@@ -87,6 +92,7 @@ void RegAndLogIn::on_pushButton_4_clicked()
     ui->pushButton_5->hide();
     ui->pushButton_6->hide();
     ui->pushButton_8->hide();
+    ui->pushButton_9->show();
     ui->lineEdit_3->hide();
     ui->lineEdit_3->setText("");
     ui->lineEdit_3->setStyleSheet("background-color:rgb(255,255,255);"
@@ -192,7 +198,8 @@ void RegAndLogIn::on_pushButton_5_clicked()
     ConnectWithServer *regToServer;
     regToServer=new ConnectWithServer;
     connect(regToServer,SIGNAL(notConnectWithServer()),this,SLOT(hideReg()));
-    connect(regToServer,SIGNAL(trueReg()),this,SLOT(dataAcceptedOnServ()));
+    //connect(regToServer,SIGNAL(trueReg()),this,SLOT(dataAcceptedOnServ()));
+    connect(regToServer,SIGNAL(trueReg()),this,SLOT(inputToApp()));
     connect(regToServer,SIGNAL(falseReg()),this,SLOT(dataNotAcceptedOnServ()));
     regToServer->registration(ui->lineEdit_3->text(),ui->lineEdit_4->text(),
                               ui->lineEdit_5->text(),ui->lineEdit_6->text());
@@ -240,7 +247,7 @@ void RegAndLogIn::on_lineEdit_4_textChanged(const QString &arg1)
 void RegAndLogIn::on_lineEdit_editingFinished()
 {
     QString str(ui->lineEdit->text());
-    int pos(-1),countD(0);
+    int pos(-1),countD(0), dot(0);
     bool check(false);
     for(int i=0;i<str.length();i++)
         if(str.at(i)=='@')
@@ -255,16 +262,24 @@ void RegAndLogIn::on_lineEdit_editingFinished()
                                     "border-radius: 5px;padding: 0 4px;");
         return;
     }
-    if(pos<1)
+    if((pos<1)||(pos==str.length()-1))
+    {
         ui->lineEdit->setStyleSheet("background-color:rgb(255,100,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
+    }
     else
     {
         check=true;
         for(int i=pos+1;i<str.length();i++)
+        {
+            if(str.at(i)=='.')
+                dot++;
             if((str.at(i)=='.')&&((i==pos+1)||(i==str.length()-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')))
                 check=false;
+        }
+        if (dot==0)
+            check=false;
         for(int i=0;i<pos;i++)
             if((str.at(i)=='.')&&((i==0)||(i==pos-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')))
                 check=false;
@@ -282,7 +297,7 @@ void RegAndLogIn::on_lineEdit_editingFinished()
 void RegAndLogIn::on_lineEdit_5_editingFinished()
 {
     QString str(ui->lineEdit_5->text());
-    int pos(-1),countD(0);
+    int pos(-1),countD(0),dot(0);
     bool check(false);
     for(int i=0;i<str.length();i++)
         if(str.at(i)=='@')
@@ -295,29 +310,48 @@ void RegAndLogIn::on_lineEdit_5_editingFinished()
         ui->lineEdit_5->setStyleSheet("background-color:rgb(255,100,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
+        ui->checkBox->setEnabled(false);
+        ui->checkBox->setChecked(false);
         return;
     }
-    if(pos<1)
+    if((pos<1)||(pos==str.length()-1))
+    {
         ui->lineEdit_5->setStyleSheet("background-color:rgb(255,100,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
+        ui->checkBox->setEnabled(false);
+        ui->checkBox->setChecked(false);
+    }
     else
     {
         check=true;
         for(int i=pos+1;i<str.length();i++)
+        {
+            if(str.at(i)=='.')
+                dot++;
             if((str.at(i)=='.')&&((i==pos+1)||(i==str.length()-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')))
                 check=false;
+        }
+        if (dot==0)
+            check=false;
         for(int i=0;i<pos;i++)
             if((str.at(i)=='.')&&((i==0)||(i==pos-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')))
                 check=false;
         if(check==false)
+        {
             ui->lineEdit_5->setStyleSheet("background-color:rgb(255,100,100);"
                                         "border: 2px solid rgb(17,164,192);"
                                         "border-radius: 5px;padding: 0 4px;");
+            ui->checkBox->setEnabled(false);
+            ui->checkBox->setChecked(false);
+        }
         else
+        {
             ui->lineEdit_5->setStyleSheet("background-color:rgb(100,255,100);"
                                         "border: 2px solid rgb(17,164,192);"
                                         "border-radius: 5px;padding: 0 4px;");
+            ui->checkBox->setEnabled(true);
+        }
     }
 }
 
@@ -351,7 +385,10 @@ void RegAndLogIn::deal()
 
 void RegAndLogIn::isAccCreate()
 {
-    QFile accountFile("account.txt");
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += "account.txt";
+    QFile accountFile(path_to_file);
     if(accountFile.open(QIODevice::ReadOnly))
     {
         emit fileWasCreate();
@@ -361,14 +398,16 @@ void RegAndLogIn::isAccCreate()
 
 void RegAndLogIn::inputToApp()
 {
-    QFile fileAccount("account.txt");
-    if(!fileAccount.exists())
-    {
-        fileAccount.open(QIODevice::WriteOnly);
-        QTextStream out(&fileAccount);
-        out << ui->lineEdit->text();
-        fileAccount.close();
-    }
+    //qDebug() << "dsad";
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += "account.txt";
+    QFile fileAccount(path_to_file);
+    fileAccount.open(QIODevice::WriteOnly);
+    QTextStream out(&fileAccount);
+    out << ui->lineEdit->text();
+    fileAccount.close();
+
     hide();
     emit sigRunMainProgram();
     //Запуск приложения
@@ -381,7 +420,12 @@ void RegAndLogIn::slotLogout()
 //    QFile file ( path );
 //    if ( file.open(QIODevice::ReadOnly) )
 //        file.remove();
-    QFile file ( "account.txt" );
+    hideReg();
+    hideLogin();
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += "account.txt";
+    QFile file ( path_to_file );
     file.remove();
     ui->lineEdit->setText("");
     ui->lineEdit_2->setText("");
@@ -389,6 +433,7 @@ void RegAndLogIn::slotLogout()
 
 void RegAndLogIn::notInputToApp()
 {
+    //qDebug() << "dsad";
     ui->label->setText(tr("Invalid username or password!"));
     ui->label->show();
 }
@@ -410,6 +455,7 @@ void RegAndLogIn::hideLogin()
     ui->pushButton->hide();
     ui->pushButton_2->hide();
     ui->pushButton_3->hide();
+    ui->pushButton_9->hide();
     ui->lineEdit->hide();
     ui->lineEdit->setText("");
     ui->lineEdit->setStyleSheet("background-color:rgb(255,255,255);"
@@ -427,10 +473,12 @@ void RegAndLogIn::hideLogin()
 
 void RegAndLogIn::hideReg()
 {
+    ui->checkBox->hide();
     ui->pushButton_4->hide();
     ui->pushButton_5->hide();
     ui->pushButton_6->hide();
     ui->pushButton_8->hide();
+    ui->pushButton_9->hide();
     ui->lineEdit_3->hide();
     ui->lineEdit_3->setText("");
     ui->lineEdit_3->setStyleSheet("background-color:rgb(255,255,255);"
@@ -467,19 +515,52 @@ void RegAndLogIn::slotRepeatConnect()
     rep=new ConnectWithServer;
     if(rep->netIsWorking()==true)
     {
-        ui->pushButton->show();
-        ui->pushButton_2->show();
-        ui->pushButton_3->show();
-        ui->lineEdit->setText("");
-        ui->lineEdit->setStyleSheet("background-color:rgb(255,255,255);"
-                                    "border: 2px solid rgb(17,164,192);"
-                                    "border-radius: 5px;padding: 0 4px;");
-        ui->lineEdit->show();
-        ui->lineEdit_2->setText("");
-        ui->lineEdit_2->setStyleSheet("background-color:rgb(255,255,255);"
-                                    "border: 2px solid rgb(17,164,192);"
-                                    "border-radius: 5px;padding: 0 4px;");
-        ui->lineEdit_2->show();
+        QString path_to_file = QDir::homePath();
+        path_to_file += "/Viewaide/";
+        path_to_file += "options.txt";
+        QFile optionFile(path_to_file);
+        if (optionFile.exists())
+        {
+            ui->pushButton->show();
+            ui->pushButton_2->show();
+            ui->pushButton_3->show();
+            ui->lineEdit->setText("");
+            ui->lineEdit->setStyleSheet("background-color:rgb(255,255,255);"
+                                        "border: 2px solid rgb(17,164,192);"
+                                        "border-radius: 5px;padding: 0 4px;");
+            ui->lineEdit->show();
+            ui->lineEdit_2->setText("");
+            ui->lineEdit_2->setStyleSheet("background-color:rgb(255,255,255);"
+                                        "border: 2px solid rgb(17,164,192);"
+                                        "border-radius: 5px;padding: 0 4px;");
+            ui->lineEdit_2->show();
+        }
+        else
+        {
+            ui->pushButton_4->show();
+            ui->pushButton_5->show();
+            ui->pushButton_6->show();
+            ui->lineEdit_3->setText("");
+            ui->lineEdit_3->setStyleSheet("background-color:rgb(255,255,255);"
+                                        "border: 2px solid rgb(17,164,192);"
+                                        "border-radius: 5px;padding: 0 4px;");
+            ui->lineEdit_3->show();
+            ui->lineEdit_4->setText("");
+            ui->lineEdit_4->setStyleSheet("background-color:rgb(255,255,255);"
+                                        "border: 2px solid rgb(17,164,192);"
+                                        "border-radius: 5px;padding: 0 4px;");
+            ui->lineEdit_4->show();
+            ui->lineEdit_5->setText("");
+            ui->lineEdit_5->setStyleSheet("background-color:rgb(255,255,255);"
+                                        "border: 2px solid rgb(17,164,192);"
+                                        "border-radius: 5px;padding: 0 4px;");
+            ui->lineEdit_5->show();
+            ui->lineEdit_6->setText("");
+            ui->lineEdit_6->setStyleSheet("background-color:rgb(255,255,255);"
+                                        "border: 2px solid rgb(17,164,192);"
+                                        "border-radius: 5px;padding: 0 4px;");
+            ui->lineEdit_6->show();
+        }
         ui->label->hide();
         ui->pushButton_7->hide();
     }
@@ -490,13 +571,20 @@ void RegAndLogIn::on_lineEdit_6_editingFinished()
 {
     QString leng(ui->lineEdit_6->text());
     if((leng.length()<6)&&(leng.length()>0))
+    {
+        ui->checkBox->setEnabled(false);
+        ui->checkBox->setChecked(false);
         ui->lineEdit_6->setStyleSheet("background-color:rgb(255,100,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
+    }
     if((leng.length()>5))
+    {
+        ui->checkBox->setEnabled(true);
         ui->lineEdit_6->setStyleSheet("background-color:rgb(100,255,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
+    }
 }
 
 void RegAndLogIn::on_lineEdit_3_editingFinished()
