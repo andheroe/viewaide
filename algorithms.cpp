@@ -75,41 +75,48 @@ void InitCascades()
 {
     QString path = QCoreApplication::applicationDirPath();
     #ifdef Q_OS_WIN
-    path+="/../../";
+    //path+="/../../";
+    path += "/haarcascade_frontalface_alt_tree.xml";
     #endif
     #ifdef Q_OS_MAC
     path+="/../../../../";
+    path += "Viewaide/haarcascade_frontalface_alt_tree.xml";
     #endif
     #ifdef Q_OS_LINUX
     path+="/../";
-    #endif
     path += "Viewaide/haarcascade_frontalface_alt_tree.xml";
+    #endif
     face_cascade=(CvHaarClassifierCascade*)cvLoad(path.toStdString().c_str(),0,0,0);
 
     path = QCoreApplication::applicationDirPath();
     #ifdef Q_OS_WIN
-    path+="/../../";
+    //path+="/../../";
+    path += "/haarcascade_mcs_lefteye.xml";
     #endif
     #ifdef Q_OS_MAC
     path+="/../../../../";
+    path += "Viewaide/haarcascade_mcs_lefteye.xml";
     #endif
     #ifdef Q_OS_LINUX
     path+="/../";
-    #endif
     path += "Viewaide/haarcascade_mcs_lefteye.xml";
+    #endif
     left_eye_cascade=(CvHaarClassifierCascade*)cvLoad(path.toStdString().c_str(),0,0,0);
 
     path = QCoreApplication::applicationDirPath();
     #ifdef Q_OS_WIN
-    path+="/../../";
+    //path+="/../../";
+    path +="/haarcascade_mcs_righteye.xml";
     #endif
     #ifdef Q_OS_MAC
     path+="/../../../../";
+    path +="Viewaide/haarcascade_mcs_righteye.xml";
     #endif
     #ifdef Q_OS_LINUX
     path+="/../";
-    #endif
     path +="Viewaide/haarcascade_mcs_righteye.xml";
+    #endif
+
     right_eye_cascade=(CvHaarClassifierCascade*)cvLoad(path.toStdString().c_str(),0,0,0);
 }
 

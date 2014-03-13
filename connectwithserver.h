@@ -8,6 +8,7 @@
 #include <QDateTime>
 #include <QEventLoop>
 #include <QThread>
+#include <QDir>
 
 class ConnectWithServer : public QObject
 {

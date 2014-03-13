@@ -31,13 +31,14 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
     ui_2->widget_2->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
     ui_2->widget_3->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
 
-    tray = new QSystemTrayIcon( QIcon (":/res/logo.png"), this );
+    tray = new QSystemTrayIcon( QIcon (":/res/Logo_only.png"), this );
 
     menu = new QMenu(this);
     act_window = menu->addAction(tr("Show"));
     act_pause = menu->addAction(tr("Pause"));
     act_options = menu->addAction(tr("Options"));
     act_calibrate = menu->addAction(tr("Calibrate"));
+    act_feedback = menu->addAction(tr("Send feedback"));
     act_logout = menu->addAction(tr("Logout"));
     act_exit = menu->addAction(tr("Exit"));
     tray->setContextMenu(menu);
@@ -256,9 +257,15 @@ void Main_window::changeEvent(QEvent * event)
     if ( event->type() == QEvent::LanguageChange )
     {
         act_window->setText(tr("Show"));
-        act_pause->setText(tr("Pause"));
+
+        if ( ( act_pause->text() == "Resume" ) || ( act_pause->text() == "Возобновить" ) )
+            act_pause->setText(tr("Resume"));
+        if ( ( act_pause->text() == "Pause" ) || ( act_pause->text() == "Пауза" ) )
+            act_pause->setText(tr("Pause"));
+
         act_options->setText(tr("Options"));
         act_calibrate->setText(tr("Calibrate"));
+        act_feedback->setText(tr("Send feedback"));
         act_logout->setText(tr("Logout"));
         act_exit->setText(tr("Exit"));
         ui_2->lbl_language->setText(tr("Language"));
@@ -518,17 +525,23 @@ void Main_window::slotWhatModeRun()
 
 void Main_window::slotToStopOrResume()
 {
-    if ( menu->actions().at(1)->text() == "Pause" )
+    if ( ( menu->actions().at(1)->text() == "Pause" ) || ( menu->actions().at(1)->text() == "Пауза" ) )
     {
         stream->stop();
         stream->wait();
-        menu->actions().at(1)->setText("Resume");
+        if ( menu->actions().at(1)->text() == "Pause" )
+            menu->actions().at(1)->setText("Resume");
+        if ( menu->actions().at(1)->text() == "Пауза" )
+            menu->actions().at(1)->setText("Возобновить");
         this->slotBusyCam();
     }
-    else if ( menu->actions().at(1)->text() == "Resume" )
+    else if ( ( menu->actions().at(1)->text() == "Resume" ) || ( menu->actions().at(1)->text() == "Возобновить" ) )
     {
-        menu->actions().at(1)->setText("Pause");
         stream->start();
+        if ( menu->actions().at(1)->text() == "Resume" )
+            menu->actions().at(1)->setText("Pause");
+        if ( menu->actions().at(1)->text() == "Возобновить" )
+            menu->actions().at(1)->setText("Пауза");
     }
 }
 
@@ -543,7 +556,10 @@ void Main_window::slotTellAboutDownloading()
 
 void Main_window::slotSetSettings()
 {
-    QFile file("settings.ini");
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += "settings.ini";
+    QFile file(path_to_file);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     while ( !file.atEnd() )
     {
@@ -577,11 +593,17 @@ void Main_window::slotSetSettings()
 
 }
 
+void Main_window::slotSendFeedback()
+{
+    QDesktopServices::openUrl(QUrl("http://viewaide.com/feedback"));
+}
+
 bool Main_window::CheckOptions()
 {
-    QString path = QCoreApplication::applicationDirPath();
-    path += "//options.txt";
-    QFile file ( path );
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += "options.txt";
+    QFile file ( path_to_file );
     if ( !file.open(QIODevice::ReadOnly) )
         return 0;
     return 1;

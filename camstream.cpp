@@ -145,7 +145,17 @@ CamStream::CamStream()
     left_eye_is_found=false;
     right_eye_is_found=false;
 
-    log_file.setFileName("log_camstream.txt");
+    QString path_to_dir = QDir::homePath();
+    path_to_dir += "/Viewaide";
+    QDir dir(path_to_dir);
+    if (!dir.exists())
+        dir.mkpath(path_to_dir);
+
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += "log_camstream.txt";
+
+    log_file.setFileName(path_to_file);
     log_file.open(QIODevice::WriteOnly | QIODevice::Text);
     log.setDevice(&log_file);
 
@@ -238,7 +248,10 @@ void CamStream::slotSaveSettings(int state)
 
 void CamStream::SaveSettings(QString filename, QString sender_name, int state)
 {
-    QFile file(filename);
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += filename;
+    QFile file(path_to_file);
     file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Append);
     file.seek(0);
     while ( !file.atEnd() )
@@ -902,10 +915,11 @@ void CamStream::run()
     stop_thread=false;
 
 
-    QString path = QCoreApplication::applicationDirPath();
-    path += "//options.txt";
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += "options.txt";
 
-    LoadOptions(path);
+    LoadOptions(path_to_file);
 
     if (!(capture=cvCaptureFromCAM(cam_index)))
     {
@@ -1121,9 +1135,10 @@ void CamStream::run()
                     calibration_mode_on=false;
                     qDebug()<<"Calibration: OK";
 
-                    QString path = QCoreApplication::applicationDirPath();
-                    path += "//options.txt";
-                    SaveOptions(path);
+                    QString path_to_file = QDir::homePath();
+                    path_to_file += "/Viewaide/";
+                    path_to_file += "options.txt";
+                    SaveOptions(path_to_file);
                     options_cur=options_new;
 
                     calibration_dist_sum = 0;
@@ -1256,9 +1271,10 @@ void CamStream::run()
 
         if(alert_iteration_count>=alert_iterations_for_statistics)
         {
-            QString s_path = QCoreApplication::applicationDirPath();
-            s_path += "//statistics.txt";
-            SaveStatistics(alert_activ_count,s_path);
+            QString path_to_file = QDir::homePath();
+            path_to_file += "/Viewaide/";
+            path_to_file += "statistics.txt";
+            SaveStatistics(alert_activ_count,path_to_file);
 
             alert_iteration_count=0;
 

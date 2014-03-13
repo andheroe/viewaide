@@ -81,6 +81,8 @@ int main(int argc, char *argv[])
     QObject::connect(m_w.act_options, SIGNAL(triggered()), m_w.ui_2->widg_options, SLOT(show()));
     QObject::connect(m_w.act_exit, SIGNAL(triggered()), &m_w, SLOT(close()));
 
+    QObject::connect(m_w.act_feedback, SIGNAL(triggered()), &m_w, SLOT(slotSendFeedback()));
+
     //QObject::connect(m_w.act_window, SIGNAL(triggered()), m_w.tray, SLOT(hide()) );
     QObject::connect(m_w.act_window, SIGNAL(triggered()), m_w.ui_2->widget_3, SLOT(show()));
 

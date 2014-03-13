@@ -29,20 +29,20 @@ bool UpdateApp::slotCheckUpdate()
 
 void UpdateApp::slotAcceptDownload()
 {
-    QString path = QCoreApplication::applicationDirPath();
-    path += "/";
-    path += inf_file;
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += inf_file;
     DownloadAnyFile(url_app_file);
-    //QFile(path).remove();
+    //QFile(path_to_file).remove();
 
 }
 
 void UpdateApp::slotRejectDownload()
 {
-    QString path = QCoreApplication::applicationDirPath();
-    path += "/";
-    path += inf_file;
-    //QFile(path).remove();
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += inf_file;
+    //QFile(path_to_file).remove();
 }
 
 bool UpdateApp::CompareVersions(const QString& new_version)
@@ -63,11 +63,11 @@ void UpdateApp::slotDoneLoad(const QString& file_name)
 
     if ( file_name == inf_file )
     {
-        QString path = QCoreApplication::applicationDirPath();
-        path += "/";
-        path += inf_file;
-        if ( CheckFile(path) )
-            new_version = ParseFile(path);
+        QString path_to_file = QDir::homePath();
+        path_to_file += "/Viewaide/";
+        path_to_file += inf_file;
+        if ( CheckFile(path_to_file) )
+            new_version = ParseFile(path_to_file);
 
         if ( CompareVersions(new_version.at(0)) )
             sigUpdateOrReject();

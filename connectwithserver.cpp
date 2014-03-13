@@ -10,6 +10,9 @@ void ConnectWithServer::uploadFile(QString filename)
     if (filename.isEmpty())
         return;
 
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += filename;
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly))
     {
@@ -107,6 +110,9 @@ void ConnectWithServer::allVarWithPhoto(QImage img,bool OpenEyes,bool NarrowedEy
     img.save(filename, "jpg");
     uploadFile(filename);
     uploadVariable(OpenEyes,NarrowedEyes,CloseEyes,NormalDist,NearDist,NormalHeight,Highly,Low,NormalLight,LightToFace,BadLight,dist);
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += filename;
     QFile file(filename);
     file.remove();
 }
