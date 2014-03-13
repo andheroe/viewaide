@@ -4,7 +4,7 @@
 <context>
     <name>CamStream</name>
     <message>
-        <location filename="camstream.cpp" line="746"/>
+        <location filename="camstream.cpp" line="779"/>
         <source>Unavailable</source>
         <translation>Недоступно</translation>
     </message>
@@ -321,14 +321,14 @@ Upgrade now?</source>
 Обновить сейчас?</translation>
     </message>
     <message>
-        <location filename="main_window.cpp" line="654"/>
+        <location filename="main_window.cpp" line="658"/>
         <source>Attention!
 Too low, sit up</source>
         <translation>Внимание!
 Сядьте выше</translation>
     </message>
     <message>
-        <location filename="main_window.cpp" line="674"/>
+        <location filename="main_window.cpp" line="678"/>
         <source>Attention!
 Too high, sit lower</source>
         <translation>Внимание!
@@ -353,14 +353,14 @@ Bad lighting</source>
         <translation>Успешно запущен!</translation>
     </message>
     <message>
-        <location filename="main_window.cpp" line="614"/>
+        <location filename="main_window.cpp" line="618"/>
         <source>Attention!
 Often squint</source>
         <translation>Внимание!
 Часто щуритесь</translation>
     </message>
     <message>
-        <location filename="main_window.cpp" line="634"/>
+        <location filename="main_window.cpp" line="638"/>
         <source>Attention!
 Too close</source>
         <translation>Внимание!
@@ -450,17 +450,27 @@ Too high</source>
         <translation>Условиями</translation>
     </message>
     <message>
-        <location filename="regandlogin.cpp" line="30"/>
+        <location filename="regandlogin.ui" line="557"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;You will get your statistics of eye problems, &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;week e-mail reports,&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt; personal eye gymnastics, based on application data.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="regandlogin.ui" line="578"/>
+        <source>Why?</source>
+        <translation>Почему?</translation>
+    </message>
+    <message>
+        <location filename="regandlogin.cpp" line="31"/>
         <source>Viewaide</source>
         <translation>Viewaide</translation>
     </message>
     <message>
-        <location filename="regandlogin.cpp" line="389"/>
+        <location filename="regandlogin.cpp" line="436"/>
         <source>Invalid username or password!</source>
         <translation>Неверный логин или пароль!</translation>
     </message>
     <message>
-        <location filename="regandlogin.cpp" line="395"/>
+        <location filename="regandlogin.cpp" line="442"/>
         <source>You have successfully registered!
 The mail has been sent to confirm your registration.</source>
         <translation>Вы успешно зарегистрировались!
@@ -468,15 +478,15 @@ The mail has been sent to confirm your registration.</source>
 </translation>
     </message>
     <message>
-        <location filename="regandlogin.cpp" line="401"/>
+        <location filename="regandlogin.cpp" line="448"/>
         <source>During registration, an error occurred!
 Check your entries and try again!</source>
         <translation>В ходе регистрации произошла ошибка!
 Проверьте введенные данные и повторите попытку!</translation>
     </message>
     <message>
-        <location filename="regandlogin.cpp" line="420"/>
-        <location filename="regandlogin.cpp" line="451"/>
+        <location filename="regandlogin.cpp" line="467"/>
+        <location filename="regandlogin.cpp" line="499"/>
         <source>No connection to the server!
 Check connection!</source>
         <translation>Нет соединения с сервером!

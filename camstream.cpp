@@ -188,19 +188,19 @@ void CamStream::pause()
 void CamStream::slotAutoRun( bool active )
 {
     #ifdef Q_OS_WIN
-//    QSettings *autorun = new QSettings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",QSettings::NativeFormat);
-//    if ( active )
-//    {
-//        autorun->setValue("Viewaide", QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
-//        autorun->sync();
-//        //autoRun->setToolTip("Отключить автозагрузку");
-//    }
-//    else
-//    {
-//        autorun->remove("Viewaide");
-//        //autoRun->setToolTip("Включить автозагрузку");
-//    }
-//    delete autorun;
+    QSettings *autorun = new QSettings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",QSettings::NativeFormat);
+    if ( active )
+    {
+        autorun->setValue("Viewaide", QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
+        autorun->sync();
+        //autoRun->setToolTip(tr("Disable autorun"));
+    }
+    else
+    {
+        autorun->remove("Viewaide");
+        //autoRun->setToolTip(tr("Enable autorun"));
+    }
+    delete autorun;
     #endif
     #ifdef Q_OS_MAC
     if ( active )
@@ -1049,7 +1049,7 @@ void CamStream::run()
         if(false_eyes_count<=0)
         {
             face_is_found=false;
-            face=Find(FACE,frame,face_is_found);
+            face=Find(FACE,frame,face_is_found,0,0.5);
 
             face_refreshed=true;
         }
@@ -1065,7 +1065,7 @@ void CamStream::run()
                     left_eye_area=ClarifyArea(LEFT_EYE,&face);
                 else
                     ExpandArea(left_eye_area,expand_koeff);
-                temp=Find(LEFT_EYE,frame,left_eye_is_found,&left_eye_area,0.5);
+                temp=Find(LEFT_EYE,frame,left_eye_is_found,&left_eye_area);
                 if(left_eye_is_found)
                     left_eye=temp;
 
@@ -1074,7 +1074,7 @@ void CamStream::run()
                     right_eye_area=ClarifyArea(RIGHT_EYE,&face);
                 else
                     ExpandArea(right_eye_area,expand_koeff);
-                temp=Find(RIGHT_EYE,frame,right_eye_is_found,&right_eye_area,0.5);
+                temp=Find(RIGHT_EYE,frame,right_eye_is_found,&right_eye_area);
                 if(right_eye_is_found)
                     right_eye=temp;
             }

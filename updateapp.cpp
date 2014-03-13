@@ -12,7 +12,7 @@ const QString UpdateApp::inf_file = "update.inf";
 const QString UpdateApp::inf_file_prefix = "Update Version";
 const QString UpdateApp::app_file_prefix = "Update App";
 const QString UpdateApp::begin_url_new_file = "http:";
-const QString UpdateApp::APP_VERSION = "1.0";
+const QString UpdateApp::APP_VERSION = "0.9";
 
 bool UpdateApp::CheckFile(const QString& path_file)
 {
@@ -33,7 +33,7 @@ void UpdateApp::slotAcceptDownload()
     path_to_file += "/Viewaide/";
     path_to_file += inf_file;
     DownloadAnyFile(url_app_file);
-    //QFile(path_to_file).remove();
+    QFile(path_to_file).remove();
 
 }
 
@@ -42,7 +42,7 @@ void UpdateApp::slotRejectDownload()
     QString path_to_file = QDir::homePath();
     path_to_file += "/Viewaide/";
     path_to_file += inf_file;
-    //QFile(path_to_file).remove();
+    QFile(path_to_file).remove();
 }
 
 bool UpdateApp::CompareVersions(const QString& new_version)
@@ -60,32 +60,34 @@ bool UpdateApp::DownloadAnyFile(const QString& url_path)
 
 void UpdateApp::slotDoneLoad(const QString& file_name)
 {
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += file_name;
+
     if ( file_name == inf_file )
     {
-        QString path_to_file = QDir::homePath();
-        path_to_file += "/Viewaide/";
-        path_to_file += inf_file;
         if ( CheckFile(path_to_file) )
             new_version = ParseFile(path_to_file);
-
+        else
+            return;
         if ( CompareVersions(new_version.at(0)) )
             sigUpdateOrReject();
     }
     else if ( file_name == "viewaide-win-setup.exe" )
     {
         #ifdef Q_OS_WIN
-            int result = (int)::ShellExecuteA(0, "open", file_name.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
+            int result = (int)::ShellExecuteA(0, "open", path_to_file.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
             if (SE_ERR_ACCESSDENIED == result)
             {
                 // Requesting elevation
-                result = (int)::ShellExecuteA(0, "runas", file_name.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
+                result = (int)::ShellExecuteA(0, "runas", path_to_file.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
             }
             if (result <= 32)
             {
                 // error handling
             }
         #else
-            if (!QProcess::startDetached(file_name))
+            if (!QProcess::startDetached(path_to_file))
             {
                 // error handling
             }

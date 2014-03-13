@@ -33,10 +33,12 @@ void DownloadFile::downloadFinished(QNetworkReply *data)
     QString path_to_file = QDir::homePath();
     path_to_file += "/Viewaide/";
     path_to_file += file_name;
+    const QByteArray sdata = data->readAll();
+    if ( sdata.length() == 0 )
+        return;
     QFile localFile(path_to_file);
     if (!localFile.open(QIODevice::WriteOnly))
         return;
-    const QByteArray sdata = data->readAll();
     localFile.write(sdata);
     localFile.close();
     emit done(file_name);

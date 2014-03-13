@@ -66,7 +66,7 @@ void DrawDistance(float dist, IplImage *frame)
     else
         if(text.length()<6)
             text+="  ";
-    text+=" sm";
+    text+=" cm";
     CvFont font=cvFont(1);
     cvPutText(frame,text.toStdString().c_str(),cvPoint(frame->width/10-frame->width/20,9*(frame->height/10)),&font,CV_RGB(255,255,255));
 }
@@ -154,7 +154,7 @@ CvRect Find(OBJECT obj,IplImage* frame,bool &state,CvRect* area,float resize_koe
         if(left_eye_cascade)
         {
             storage=cvCreateMemStorage(0);
-            seq=cvHaarDetectObjects(small_frame,face_cascade,storage,1.2,3,CV_HAAR_DO_CANNY_PRUNING,cvSize(80.*resize_koeff,120.*resize_koeff),cvSize(320.*resize_koeff,480.*resize_koeff));
+            seq=cvHaarDetectObjects(small_frame,face_cascade,storage,1.2,3,CV_HAAR_DO_CANNY_PRUNING,cvSize(80.*resize_koeff,120.*resize_koeff)/*,cvSize(320.*resize_koeff,480.*resize_koeff)*/);
             if(seq->total>0)
             {
                 rect=*((CvRect*)cvGetSeqElem(seq,0));

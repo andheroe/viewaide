@@ -421,6 +421,7 @@ void RegAndLogIn::slotLogout()
 //    if ( file.open(QIODevice::ReadOnly) )
 //        file.remove();
     hideReg();
+    hideLogin();
     QString path_to_file = QDir::homePath();
     path_to_file += "/Viewaide/";
     path_to_file += "account.txt";
@@ -454,6 +455,7 @@ void RegAndLogIn::hideLogin()
     ui->pushButton->hide();
     ui->pushButton_2->hide();
     ui->pushButton_3->hide();
+    ui->pushButton_9->hide();
     ui->lineEdit->hide();
     ui->lineEdit->setText("");
     ui->lineEdit->setStyleSheet("background-color:rgb(255,255,255);"
@@ -476,6 +478,7 @@ void RegAndLogIn::hideReg()
     ui->pushButton_5->hide();
     ui->pushButton_6->hide();
     ui->pushButton_8->hide();
+    ui->pushButton_9->hide();
     ui->lineEdit_3->hide();
     ui->lineEdit_3->setText("");
     ui->lineEdit_3->setStyleSheet("background-color:rgb(255,255,255);"

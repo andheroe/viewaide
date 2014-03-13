@@ -13,6 +13,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+    QThread::msleep(1000);
     QApplication a(argc, argv);
 
     CamStream* stream=new CamStream();
