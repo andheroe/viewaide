@@ -60,7 +60,6 @@ bool UpdateApp::DownloadAnyFile(const QString& url_path)
 
 void UpdateApp::slotDoneLoad(const QString& file_name)
 {
-
     if ( file_name == inf_file )
     {
         QString path = QCoreApplication::applicationDirPath();
@@ -68,7 +67,6 @@ void UpdateApp::slotDoneLoad(const QString& file_name)
         path += inf_file;
         if ( CheckFile(path) )
             new_version = ParseFile(path);
-
         if ( CompareVersions(new_version.at(0)) )
             sigUpdateOrReject();
     }

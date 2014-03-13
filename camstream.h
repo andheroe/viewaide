@@ -24,6 +24,7 @@
 
 #include "algorithms.h"
 #include "updateapp.h"
+#include "connectwithserver.h"
 
 using namespace cv;
 using namespace std;
@@ -250,6 +251,7 @@ public:
     void SaveOptions(QString filename="options.txt");
     void LoadOptions(QString filename="options.txt");
     void SaveStatistics(alert_activations alert_count,QString filename);
+    void SendStatisticsToServer(QStringList &list);
 
     void CompareModeOn();
     void CompareModeOff();

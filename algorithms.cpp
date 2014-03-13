@@ -312,7 +312,7 @@ int* GetEyeDist(IplImage* frame)
     IplImage* dst;
     IplImage* dst_temp;
 
-    //cvSaveImage(("C:/Users/andheroe/Desktop/Original/"+QString::number(ccc)+".jpg").toStdString().c_str(),frame);
+    //cvSaveImage((QCoreApplication::applicationDirPath()+"/Original/"+QString::number(ccc)+".jpg").toStdString().c_str(),frame);
 
     eye=cvCreateImage(cvGetSize(frame),frame->depth,1);
     cvCopy(frame,eye);
@@ -323,7 +323,7 @@ int* GetEyeDist(IplImage* frame)
     cvLaplace(eye, dst_temp, 9);
     cvConvertScale(dst_temp, dst);
 
-    //cvSaveImage(("C:/Users/andheroe/Desktop/Stage1/"+QString::number(ccc)+".jpg").toStdString().c_str(),dst);
+    //cvSaveImage((QCoreApplication::applicationDirPath()+"/Stage1/"+QString::number(ccc)+".jpg").toStdString().c_str(),dst);
 
     uchar* ptr;
     int sum=0,counter=0;
@@ -341,7 +341,7 @@ int* GetEyeDist(IplImage* frame)
     int threshold=sum/counter;
     cvThreshold(dst,dst,threshold,255,CV_THRESH_BINARY);
 
-    //cvSaveImage(("C:/Users/andheroe/Desktop/Stage2/"+QString::number(ccc)+".jpg").toStdString().c_str(),dst);
+    cvSaveImage((QCoreApplication::applicationDirPath()+"/Stage2/"+QString::number(ccc)+".jpg").toStdString().c_str(),dst);
 
     for(int y=0;y<dst->height*(1./5.);++y)
     {
@@ -425,7 +425,7 @@ int* GetEyeDist(IplImage* frame)
                 ptr[x]=0;
     }
 
-    //cvSaveImage(("C:/Users/andheroe/Desktop/Stage3/"+QString::number(ccc)+".jpg").toStdString().c_str(),dst);
+    //cvSaveImage((QCoreApplication::applicationDirPath()+"/Stage3/"+QString::number(ccc)+".jpg").toStdString().c_str(),dst);
 
     bool is_line;
     int up=0,down=dst->height-1;
@@ -457,7 +457,7 @@ int* GetEyeDist(IplImage* frame)
             break;
     }
 
-    //cvSaveImage(("C:/Users/andheroe/Desktop/Stage3/"+QString::number(ccc)+".jpg").toStdString().c_str(),dst);
+    //cvSaveImage((QCoreApplication::applicationDirPath()+"/Stage4/"+QString::number(ccc)+".jpg").toStdString().c_str(),dst);
 
     for ( int j = 0; j < h; ++j )
         delete []mass[j];
@@ -471,7 +471,7 @@ int* GetEyeDist(IplImage* frame)
     res[0]=down-up;
     res[1]=down;
     res[2]=up;
-
+//ccc++;
     return res;
 
 }
