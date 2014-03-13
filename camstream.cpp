@@ -607,6 +607,10 @@ void CamStream::SaveStatistics(alert_activations alert_count,QString filename)
             str=file_stream.readLine();
         }
         str=list.at(list.size()-1);
+        list.removeLast();
+
+        if(list.size()>0)
+            SendStatisticsToServer(list);
 
         QStringList parts = str.split(" ", QString::KeepEmptyParts);
 
@@ -618,7 +622,7 @@ void CamStream::SaveStatistics(alert_activations alert_count,QString filename)
         {
             file.close();
             file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
-            for(int i=0;i<list.size()-1;++i)
+            for(int i=0;i<list.size();++i)
                 file_stream<<list.at(i)<<'\n';
 
             p1+=parts[3].toInt();
@@ -638,6 +642,22 @@ void CamStream::SaveStatistics(alert_activations alert_count,QString filename)
                <<" "<<p1<<" "<<p2<<" "<<p3<<" "<<p4<<" "<<p5<<" "<<p6<<" "<<p7<<" "<<p8<<" "<<p9<<"\n";
 
     file.close();
+}
+
+void CamStream::SendStatisticsToServer(QStringList &list)
+{
+    QFile file("account.txt");
+    file.open(QIODevice::ReadWrite | QIODevice::Text);
+    QTextStream file_stream;
+    file_stream.setDevice(&file);
+    QString login=file_stream.readLine();
+
+    ConnectWithServer obj;
+    if(obj.netIsWorking())
+    {
+        for(int i=0;i<list.size();++i)
+            obj.uploadAllData(login+" "+list.at(i),"http://viewaide.com/getstats.php");
+    }
 }
 
 void CamStream::slotAlertOn()
@@ -806,8 +826,6 @@ void CamStream::SaveCurFaceKoeffs()
 
 void CamStream::run()
 {
-
-
     emit UnlockCam();
     log<<"Thread is running"<<"\n";
     stop_thread=false;
@@ -875,7 +893,6 @@ void CamStream::run()
         }
     }
 
-
     while((!stop_thread))
     {
         if(thread_is_paused)
@@ -917,8 +934,13 @@ void CamStream::run()
 //        //////////
 
         ///////
-        //face=Find(FACE,frame,face_is_found,0,0.5);
-        //DrawRect(face,255,255,255,frame);
+//        QTime t;
+//        t.start();
+//        face=Find(FACE,frame,face_is_found,0,0.5);
+//        DrawRect(face,255,255,255,frame);
+//        IplImage *small_frame=cvCreateImage(cvSize((int)(frame->width*0.5),(int)(frame->height*0.5)),frame->depth,frame->nChannels);
+//        cvResize(frame,small_frame);
+//        cvSaveImage("test.jpg",small_frame);
         ///////
 
         if(false_eyes_count<=0)
@@ -1109,7 +1131,6 @@ void CamStream::run()
 //        //////////
 //        cvWriteFrame(writer_alert, frame);
 //        //////////
-
         if((left_eye_is_found && right_eye_is_found) && alert_on)
         {
             if(alert_iteration_time.elapsed()>alert_iteration_time_msecs)

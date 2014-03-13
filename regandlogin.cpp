@@ -362,10 +362,13 @@ void RegAndLogIn::isAccCreate()
 void RegAndLogIn::inputToApp()
 {
     QFile fileAccount("account.txt");
-    fileAccount.open(QIODevice::WriteOnly);
-    QTextStream out(&fileAccount);
-    out << ui->lineEdit->text();
-    fileAccount.close();
+    if(!fileAccount.exists())
+    {
+        fileAccount.open(QIODevice::WriteOnly);
+        QTextStream out(&fileAccount);
+        out << ui->lineEdit->text();
+        fileAccount.close();
+    }
     hide();
     emit sigRunMainProgram();
     //Запуск приложения
