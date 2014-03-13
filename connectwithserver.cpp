@@ -5,100 +5,6 @@ ConnectWithServer::ConnectWithServer(QObject *parent) :
 {
 }
 
-void ConnectWithServer::uploadFile(QString filename)
-{
-    if (filename.isEmpty())
-        return;
-
-    QString path_to_file = QDir::homePath();
-    path_to_file += "/Viewaide/";
-    path_to_file += filename;
-    QFile file(filename);
-    if (!file.open(QIODevice::ReadOnly))
-    {
-        QMessageBox msgBox;
-        msgBox.setText("NO FILE!");
-        msgBox.exec();
-        return;
-    }
-
-    QUrl url("http://livedp.org.ua/eyedoc/upload.php");
-
-    QNetworkRequest request;
-    request.setUrl(url);
-    request.setRawHeader("Host", "viewaide.com");
-    request.setRawHeader("Content-type", "multipart/form-data, boundary=AyV04a");
-    request.setRawHeader("Cache-Control", "no-cache");
-    request.setRawHeader("Accept","*/*");
-
-    QByteArray bytes;
-    bytes.append("--AyV04a\r\n");
-    bytes.append("Content-disposition: form-data; name=\"submit\"\r\n");
-    bytes.append("\r\n");
-    bytes.append("1");
-    bytes.append("\r\n");
-    bytes.append("--AyV04a\r\n");
-    bytes.append("Content-Disposition: file; name=\"file\"; filename=\"logo.png\"\r\n");
-    bytes.append("Content-Transfer-Encoding: binary\r\n");
-    bytes.append("\r\n");
-    while (!file.atEnd())
-        bytes.append(file.readLine());
-    bytes.append("\r\n");
-    bytes.append("--AyV04a--");
-
-    QNetworkAccessManager* pManager = new QNetworkAccessManager();
-    pManager->post(request, bytes);
-}
-
-void ConnectWithServer::uploadVariable(bool OpenEyes,bool NarrowedEyes,bool CloseEyes,
-                              bool NormalDist,bool NearDist,bool NormalHeight,
-                              bool Highly,bool Low,bool NormalLight,bool LightToFace,
-                              bool BadLight,float dist)
-{
-    QUrl url("http://livedp.org.ua/eyedoc/upload.php");
-
-    QNetworkRequest request;
-    request.setUrl(url);
-    request.setRawHeader("Host", "viewaide.com");
-    request.setRawHeader("Content-type", "multipart/form-data, boundary=AyV04a");
-    request.setRawHeader("Cache-Control", "no-cache");
-    request.setRawHeader("Accept","*/*");
-
-    QByteArray body;
-    body.append("--AyV04a\r\n");
-    body.append("Content-disposition: form-data; name=\"dist\"\r\n");
-    body.append("\r\n");
-    body.append(body.number(OpenEyes));
-    body.append("\r\n");
-    body.append(body.number(NarrowedEyes));
-    body.append("\r\n");
-    body.append(body.number(CloseEyes));
-    body.append("\r\n");
-    body.append(body.number(NormalDist));
-    body.append("\r\n");
-    body.append(body.number(NearDist));
-    body.append("\r\n");
-    body.append(body.number(NormalHeight));
-    body.append("\r\n");
-    body.append(body.number(Highly));
-    body.append("\r\n");
-    body.append(body.number(Low));
-    body.append("\r\n");
-    body.append(body.number(NormalLight));
-    body.append("\r\n");
-    body.append(body.number(LightToFace));
-    body.append("\r\n");
-    body.append(body.number(BadLight));
-    body.append("\r\n");
-    body.append(body.number(dist));
-    body.append("\r\n");
-    body.append("--AyV04a\r\n");
-    body.append("Content-Transfer-Encoding: binary\r\n");
-    body.append("--AyV04a--");
-
-    QNetworkAccessManager *mgr = new QNetworkAccessManager();
-    mgr->post(request, body);
-}
 
 void ConnectWithServer::allVarWithPhoto(QImage img,bool OpenEyes,bool NarrowedEyes,bool CloseEyes,bool NormalDist,bool NearDist,bool NormalHeight,bool Highly,bool Low,bool NormalLight,bool LightToFace,bool BadLight,float dist)
 {
@@ -108,13 +14,6 @@ void ConnectWithServer::allVarWithPhoto(QImage img,bool OpenEyes,bool NarrowedEy
     filename=NowDateTime.toString("yyyyMdHms");
     filename.append(".jpg");
     img.save(filename, "jpg");
-    uploadFile(filename);
-    uploadVariable(OpenEyes,NarrowedEyes,CloseEyes,NormalDist,NearDist,NormalHeight,Highly,Low,NormalLight,LightToFace,BadLight,dist);
-    QString path_to_file = QDir::homePath();
-    path_to_file += "/Viewaide/";
-    path_to_file += filename;
-    QFile file(filename);
-    file.remove();
 }
 
 void ConnectWithServer::registration(QString firstname,QString secondname,QString mail,QString password)
@@ -179,20 +78,19 @@ void ConnectWithServer::login(QString logIn, QString password)
     loop.exec();
 }
 
-void ConnectWithServer::uploadAllData(QString dataToServer, QString urlstring)
+void ConnectWithServer::uploadAllData(QString dataToServer, QString surl)
 {
-    QUrl url(urlstring);
+    QUrl url(surl);
 
-    QNetworkRequest request;
-    request.setUrl(url);
-    request.setRawHeader("Host", "viewaide.com");
-    request.setRawHeader("Content-type", "multipart/form-data, boundary=AyV04a");
-    request.setRawHeader("Cache-Control", "no-cache");
-    request.setRawHeader("Accept","*/*");
+    req.setUrl(url);
+    req.setRawHeader("Host", "viewaide.com");
+    req.setRawHeader("Content-type", "multipart/form-data, boundary=AyV04a");
+    req.setRawHeader("Cache-Control", "no-cache");
+    req.setRawHeader("Accept","*/*");
 
     QByteArray body;
     body.append("--AyV04a\r\n");
-    body.append("Content-disposition: form-data; name=\"allData\"\r\n");
+    body.append("Content-disposition: form-data; name=\"stats\"\r\n");
     body.append("\r\n");
     body.append(dataToServer);
     body.append("\r\n");
@@ -200,8 +98,10 @@ void ConnectWithServer::uploadAllData(QString dataToServer, QString urlstring)
     body.append("Content-Transfer-Encoding: binary\r\n");
     body.append("--AyV04a--");
 
-    QNetworkAccessManager *mgr = new QNetworkAccessManager();
-    mgr->post(request, body);
+    rep=manager->post(req, body);
+    QEventLoop loop;
+    connect(rep,SIGNAL(finished()),&loop,SLOT(quit()));
+    loop.exec();
 }
 
 bool ConnectWithServer::netIsWorking()

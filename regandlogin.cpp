@@ -407,6 +407,7 @@ void RegAndLogIn::inputToApp()
     QTextStream out(&fileAccount);
     out << ui->lineEdit->text();
     fileAccount.close();
+
     hide();
     emit sigRunMainProgram();
     //Запуск приложения

@@ -60,7 +60,6 @@ bool UpdateApp::DownloadAnyFile(const QString& url_path)
 
 void UpdateApp::slotDoneLoad(const QString& file_name)
 {
-
     if ( file_name == inf_file )
     {
         QString path_to_file = QDir::homePath();
