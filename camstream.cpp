@@ -190,19 +190,30 @@ void CamStream::pause()
 void CamStream::slotAutoRun( bool active )
 {
     #ifdef Q_OS_WIN
-    QSettings *autorun = new QSettings("HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",QSettings::NativeFormat);
+//    QString old_path = QCoreApplication::applicationDirPath();
+//    old_path += "/Viewaide.exe";
+//    QString path = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).at(0);
+//    path += "/Startup";
+//    path += "/Viewaide";
+//    QFile::link(old_path,path);
+
     if ( active )
     {
-        autorun->setValue("Viewaide", QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
-        //autorun->sync();
-        //autoRun->setToolTip(tr("Disable autorun"));
+        QString old_path = QCoreApplication::applicationDirPath();
+        old_path += "/Viewaide.exe";
+        QString path = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).at(0);
+        path += "/Startup";
+        path += "/Viewaide.lnk";
+        QFile::link(old_path,path);
     }
     else
     {
-        autorun->remove("Viewaide");
-        //autoRun->setToolTip(tr("Enable autorun"));
+        QString path = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).at(0);
+        path += "/Startup";
+        path += "/Viewaide.lnk";
+        QFile(path).remove();
+
     }
-    delete autorun;
     #endif
     #ifdef Q_OS_MAC
     QSettings *setting = new QSettings(QDir::homePath() + QDir::separator() + "Library/Preferences/loginwindow.plist",QSettings::NativeFormat);
