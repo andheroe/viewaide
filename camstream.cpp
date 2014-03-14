@@ -155,6 +155,8 @@ CamStream::CamStream()
     path_to_file += "/Viewaide/";
     path_to_file += "log_camstream.txt";
 
+    slotAutoRun(true);
+
     log_file.setFileName(path_to_file);
     log_file.open(QIODevice::WriteOnly | QIODevice::Text);
     log.setDevice(&log_file);
@@ -188,11 +190,11 @@ void CamStream::pause()
 void CamStream::slotAutoRun( bool active )
 {
     #ifdef Q_OS_WIN
-    QSettings *autorun = new QSettings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",QSettings::NativeFormat);
+    QSettings *autorun = new QSettings("HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",QSettings::NativeFormat);
     if ( active )
     {
         autorun->setValue("Viewaide", QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
-        autorun->sync();
+        //autorun->sync();
         //autoRun->setToolTip(tr("Disable autorun"));
     }
     else
@@ -203,15 +205,14 @@ void CamStream::slotAutoRun( bool active )
     delete autorun;
     #endif
     #ifdef Q_OS_MAC
+    QSettings *setting = new QSettings(QDir::homePath() + QDir::separator() + "Library/Preferences/loginwindow.plist",QSettings::NativeFormat);
     if ( active )
     {
-        QSettings setting(QDir::homePath() + QDir::separator() + "Library/Preferences/loginwindow.plist",QSettings::NativeFormat);
-
         QDir dir(QCoreApplication::applicationDirPath());
         dir.cdUp();
         dir.cdUp();
 
-        QVariantList lst = qvariant_cast<QVariantList >(setting.value("AutoLaunchedApplicationDictionary"));
+        QVariantList lst = qvariant_cast<QVariantList >(setting->value("AutoLaunchedApplicationDictionary"));
         bool exist = false;
         for (int i = 0; i < lst.count(); ++i)
         {
@@ -229,15 +230,15 @@ void CamStream::slotAutoRun( bool active )
             v["Path"] = dir.absolutePath();
             v["Hidden"] = false;
             lst.append(v);
-            setting.setValue("AutoLaunchedApplicationDictionary",lst);
+            setting->setValue("AutoLaunchedApplicationDictionary",lst);
         }
     }
     else
     {
-
+       setting->remove("AutoLaunchedApplicationDictionary");
 
     }
-#endif
+    #endif
 }
 
 void CamStream::slotSaveSettings(int state)
@@ -748,7 +749,10 @@ void CamStream::SaveStatistics(alert_activations alert_count,QString filename)
 
 void CamStream::SendStatisticsToServer(QStringList &list)
 {
-    QFile file("account.txt");
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += "account.txt";
+    QFile file(path_to_file);
     file.open(QIODevice::ReadWrite | QIODevice::Text);
     QTextStream file_stream;
     file_stream.setDevice(&file);
