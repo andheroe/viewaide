@@ -577,12 +577,12 @@ void Main_window::slotSetSettings()
         else if ( str.startsWith("checkb_visual") )
         {
             str = file.readLine();
-            ui_2->checkb_voice->setChecked(str.toInt());
+            ui_2->checkb_visual->setChecked(str.toInt());
         }
         else if ( str.startsWith("checkb_voice") )
         {
             str = file.readLine();
-            ui_2->checkb_visual->setChecked(str.toInt());
+            ui_2->checkb_voice->setChecked(str.toInt());
         }
         else if ( str.startsWith("checkb_autorun") )
         {
@@ -595,7 +595,7 @@ void Main_window::slotSetSettings()
 
 void Main_window::slotSendFeedback()
 {
-    QDesktopServices::openUrl(QUrl("http://viewaide.com/feedback"));
+    QDesktopServices::openUrl(QUrl("http://viewaide.com/#contacts"));
 }
 
 bool Main_window::CheckOptions()

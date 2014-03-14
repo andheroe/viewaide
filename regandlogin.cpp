@@ -398,15 +398,17 @@ void RegAndLogIn::isAccCreate()
 
 void RegAndLogIn::inputToApp()
 {
-    //qDebug() << "dsad";
     QString path_to_file = QDir::homePath();
     path_to_file += "/Viewaide/";
     path_to_file += "account.txt";
     QFile fileAccount(path_to_file);
-    fileAccount.open(QIODevice::WriteOnly);
-    QTextStream out(&fileAccount);
-    out << ui->lineEdit->text();
-    fileAccount.close();
+    if ( !fileAccount.exists() )
+    {
+        fileAccount.open(QIODevice::WriteOnly);
+        QTextStream out(&fileAccount);
+        out << ui->lineEdit->text();
+        fileAccount.close();
+    }
 
     hide();
     emit sigRunMainProgram();
@@ -433,7 +435,6 @@ void RegAndLogIn::slotLogout()
 
 void RegAndLogIn::notInputToApp()
 {
-    //qDebug() << "dsad";
     ui->label->setText(tr("Invalid username or password!"));
     ui->label->show();
 }
@@ -519,6 +520,7 @@ void RegAndLogIn::slotRepeatConnect()
         path_to_file += "/Viewaide/";
         path_to_file += "options.txt";
         QFile optionFile(path_to_file);
+        ui->pushButton_9->show();
         if (optionFile.exists())
         {
             ui->pushButton->show();
