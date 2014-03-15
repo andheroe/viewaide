@@ -407,7 +407,11 @@ void RegAndLogIn::inputToApp()
         fileAccount.open(QIODevice::WriteOnly);
         QTextStream out(&fileAccount);
         out << ui->lineEdit->text();
+        out << ui->lineEdit_5->text();
         fileAccount.close();
+
+        //for metrics
+        emit signalSaveMetrics();
     }
 
     hide();

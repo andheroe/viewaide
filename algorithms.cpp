@@ -1,7 +1,5 @@
 #include "algorithms.h"
 
-//This is comment to test andheroe branch
-
 CvHaarClassifierCascade* face_cascade;
 CvHaarClassifierCascade* left_eye_cascade;
 CvHaarClassifierCascade* right_eye_cascade;
@@ -75,12 +73,12 @@ void InitCascades()
 {
     QString path = QCoreApplication::applicationDirPath();
     #ifdef Q_OS_WIN
-    //path+="/../../";
+    //path+="/../../Viewaide/";
     path += "/haarcascade_frontalface_alt_tree.xml";
     #endif
     #ifdef Q_OS_MAC
-    path+="/../../../../";
-    path += "Viewaide/haarcascade_frontalface_alt_tree.xml";
+    path+="/../Resources";
+    path += "/haarcascade_frontalface_alt_tree.xml";
     #endif
     #ifdef Q_OS_LINUX
     path+="/../";
@@ -90,12 +88,12 @@ void InitCascades()
 
     path = QCoreApplication::applicationDirPath();
     #ifdef Q_OS_WIN
-    //path+="/../../";
+    //path+="/../../Viewaide/";
     path += "/haarcascade_mcs_lefteye.xml";
     #endif
     #ifdef Q_OS_MAC
-    path+="/../../../../";
-    path += "Viewaide/haarcascade_mcs_lefteye.xml";
+    path+="/../Resources";
+    path += "/haarcascade_mcs_lefteye.xml";
     #endif
     #ifdef Q_OS_LINUX
     path+="/../";
@@ -105,12 +103,12 @@ void InitCascades()
 
     path = QCoreApplication::applicationDirPath();
     #ifdef Q_OS_WIN
-    //path+="/../../";
+    //path+="/../../Viewaide/";
     path +="/haarcascade_mcs_righteye.xml";
     #endif
     #ifdef Q_OS_MAC
-    path+="/../../../../";
-    path +="Viewaide/haarcascade_mcs_righteye.xml";
+    path+="/../Resources";
+    path +="/haarcascade_mcs_righteye.xml";
     #endif
     #ifdef Q_OS_LINUX
     path+="/../";

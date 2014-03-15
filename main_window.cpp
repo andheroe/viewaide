@@ -79,6 +79,7 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
     SetNotifGeom();
     sound = new QSound ( ":/res/sound.wav", this );
 
+    stream->log<<"Main window created object\n";
 }
 
 Main_window::~Main_window()
@@ -86,6 +87,98 @@ Main_window::~Main_window()
     stream->stop();
     stream->wait();
     delete stream;
+
+    //for metrics
+    if(save_metrics)
+    {
+        QString metrics;
+
+        QString path_to_file = QDir::homePath();
+        path_to_file += "/Viewaide/";
+        path_to_file += "account.txt";
+        QFile file(path_to_file);
+        file.open(QIODevice::ReadWrite | QIODevice::Text);
+        QTextStream file_stream;
+        file_stream.setDevice(&file);
+        QString login=file_stream.readLine();
+
+        metrics=login+"\n";
+
+        file.close();
+
+        QSysInfo info;
+        #ifdef Q_OS_WIN
+        switch(info.windowsVersion())
+        {
+            case QSysInfo::WV_WINDOWS8: metrics+="Windows 8\n";break;
+            case QSysInfo::WV_WINDOWS7: metrics+="Windows 7\n";break;
+            case QSysInfo::WV_VISTA: metrics+="Windows Vista\n";break;
+            case QSysInfo::WV_XP :metrics+="Windows XP\n";break;
+            default: metrics+="Windows ??\n";break;
+        }
+        #endif
+
+        #ifdef Q_OS_MAC
+        switch(info.macVersion())
+        {
+            case QSysInfo::MV_10_5: metrics+="OS X 10.5\n";break;
+            case QSysInfo::MV_10_6: metrics+="OS X 10.6\n";break;
+            case QSysInfo::MV_10_7: metrics+="OS X 10.7\n";break;
+            case QSysInfo::MV_10_8: metrics+="OS X 10.8\n";break;
+            case QSysInfo::MV_10_9: metrics+="OS X 10.9\n";break;
+            default: metrics+="OS X ??\n";break;
+        }
+        #endif
+
+        metrics+=QDir::homePath()+"\n";
+
+        path_to_file = QDir::homePath();
+        path_to_file += "/Viewaide/";
+        path_to_file += "log.txt";
+        QFile file1(path_to_file);
+        file1.open(QIODevice::ReadWrite | QIODevice::Text);
+        QTextStream file_stream1;
+        file_stream1.setDevice(&file1);
+
+        metrics+="\n[log]////////////\n";
+        metrics+=file_stream1.readAll();
+        metrics+="////////////\n";
+
+        file1.close();
+
+        path_to_file = QDir::homePath();
+        path_to_file += "/Viewaide/";
+        path_to_file += "options.txt";
+        QFile file2(path_to_file);
+        file2.open(QIODevice::ReadWrite | QIODevice::Text);
+        QTextStream file_stream2;
+        file_stream2.setDevice(&file2);
+
+        metrics+="\n[options]////////////\n";
+        metrics+=file_stream2.readAll();
+        metrics+="////////////\n";
+
+        file2.close();
+
+        path_to_file = QDir::homePath();
+        path_to_file += "/Viewaide/";
+        path_to_file += "settings.ini";
+        QFile file3(path_to_file);
+        file3.open(QIODevice::ReadWrite | QIODevice::Text);
+        QTextStream file_stream3;
+        file_stream3.setDevice(&file3);
+
+        metrics+="\n[settings]////////////\n";
+        metrics+=file_stream3.readAll();
+        metrics+="////////////\n";
+
+        file3.close();
+
+        qDebug()<<metrics;
+        ConnectWithServer obj;
+        if(obj.netIsWorking())
+            obj.uploadAllData(metrics,"http://viewaide.com/test.php","str");
+    }
     delete ui;
     delete ui_2;
     delete sound;
@@ -177,18 +270,21 @@ void Main_window::SetRules()
 {
     if ( calibration_numb == 1 )
     {
+        stream->log<<"Calibration STAGE1\n";
         ui->lbl_rules->setText(tr("Put your face into the rectangle"));
         ui->lbl_pbar->setStyleSheet("border-image: url(:/res/pbar1.png)");
         emit sigSendCalibStage(STAGE1);
     }
     else if ( calibration_numb == 2 )
     {
+        stream->log<<"Calibration STAGE2\n";
         ui_2->lbl_rules2->setText(tr("Make sure that your eyes are highlighted"));
         ui->lbl_pbar->setStyleSheet("border-image: url(:/res/pbar2.png)");
         emit sigSendCalibStage(STAGE2);
     }
     else if ( calibration_numb == 3 )
     {
+        stream->log<<"Calibration STAGE3\n";
         ui->lbl_rules->setText(tr("Check the distance to the monitor"));
         ui->lbl_pbar->setStyleSheet("border-image: url(:/res/pbar3.png)");
         emit sigSendCalibStage(STAGE3);
@@ -688,7 +784,6 @@ void Main_window::TooHeighAlert()
         }
     }
 }
-
 
 void Main_window::slotMinimizeWindow()
 {
