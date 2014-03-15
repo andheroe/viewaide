@@ -10,6 +10,7 @@
 #include <QDate>
 #include <QSettings>
 #include <QDir>
+#include <QDesktopServices>
 
 #ifdef Q_OS_WIN
 #include "videoInput.h"
