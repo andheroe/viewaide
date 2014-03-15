@@ -78,7 +78,7 @@ void ConnectWithServer::login(QString logIn, QString password)
     loop.exec();
 }
 
-void ConnectWithServer::uploadAllData(QString dataToServer, QString surl)
+void ConnectWithServer::uploadAllData(QString dataToServer, QString surl, QString request_name)
 {
     QUrl url(surl);
 
@@ -90,7 +90,7 @@ void ConnectWithServer::uploadAllData(QString dataToServer, QString surl)
 
     QByteArray body;
     body.append("--AyV04a\r\n");
-    body.append("Content-disposition: form-data; name=\"stats\"\r\n");
+    body.append("Content-disposition: form-data; name=\""+request_name+"\"\r\n");
     body.append("\r\n");
     body.append(dataToServer);
     body.append("\r\n");

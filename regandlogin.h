@@ -59,6 +59,9 @@ signals:
     void sigRepeatPlease();
     void sigRunMainProgram();
 
+    //for metrics
+    void signalSaveMetrics();
+
 protected:
     void showEvent(QShowEvent *e)
     {
