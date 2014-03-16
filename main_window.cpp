@@ -17,6 +17,8 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
     ui->setupUi(this);
     ui_2->setupUi(this);
 
+
+
     ui_2->btn_accept->hide();
     ui_2->btn_notnow->hide();
 
@@ -60,18 +62,22 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
     ui_2->btn_close_2->setParent(ui_2->lbl_title);
     ui_2->lbl_title->setParent(ui_2->lbl_video);
 
-
-    QDesktopWidget* desk = qApp->desktop();
-    int desk_w = desk->width();
-    int desk_h = desk->height();
-
     tray->setToolTip("Viewaide");
 
-    ui_2->widg_options->setGeometry(desk_w / 2 - ui_2->widg_options->width() / 2, desk_h / 2 - ui_2->widg_options->height() / 2, ui_2->widg_options->width(), ui_2->widg_options->height());
+//    QDesktopWidget* desk = qApp->desktop();
+//    int desk_w = desk->width();
+//    int desk_h = desk->height();
 
-    ui_2->widget_2->setGeometry(desk_w / 2 - ui_2->widget_2->width() / 2, desk_h / 2 - ui_2->widget_2->height() / 2, ui_2->widget_2->width(), ui_2->widget_2->height());
+//    ui_2->widg_options->setGeometry(desk_w / 2 - ui_2->widg_options->width() / 2, desk_h / 2 - ui_2->widg_options->height() / 2, ui_2->widg_options->width(), ui_2->widg_options->height());
 
-    ui_2->widget_3->setGeometry(desk_w / 2 - ui_2->widget_3->width() / 2, desk_h / 2 - ui_2->widget_3->height() / 2, ui_2->widget_3->width(), ui_2->widget_3->height());
+//    ui_2->widget_2->setGeometry(desk_w / 2 - ui_2->widget_2->width() / 2, desk_h / 2 - ui_2->widget_2->height() / 2, ui_2->widget_2->width(), ui_2->widget_2->height());
+
+//    ui_2->widget_3->setGeometry(desk_w / 2 - ui_2->widget_3->width() / 2, desk_h / 2 - ui_2->widget_3->height() / 2, ui_2->widget_3->width(), ui_2->widget_3->height());
+
+    CenterToScreen(ui_2->widg_options);
+    CenterToScreen(ui_2->widget_2);
+    CenterToScreen(ui_2->widget_3);
+
 
     calibration_timer = new QTime;
 
@@ -183,6 +189,19 @@ Main_window::~Main_window()
     delete ui_2;
     delete sound;
 
+}
+
+void Main_window::CenterToScreen(QWidget* widget)
+{
+    if ( !widget )
+        return;
+    QDesktopWidget* m = QApplication::desktop();
+    QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
+    int desk_x = desk_rect.width();
+    int desk_y = desk_rect.height();
+    int x = widget->width();
+    int y = widget->height();
+    widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
 }
 
 void Main_window::mousePressEvent(QMouseEvent* event)
@@ -470,24 +489,42 @@ void Main_window::ResetCalibration()
 
 void Main_window::InitNotifAnim()
 {
+    qDebug() << "looool";
+
+    QDesktopWidget* m = QApplication::desktop();
+    QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
+
     anim_come_out = new QPropertyAnimation ( ui_2->widget, "geometry" );
     anim_come_out->setDuration(1500);
     anim_come_out->setEasingCurve(QEasingCurve::OutQuad);
-    anim_come_out->setEndValue(QRectF(qApp->desktop()->width()-250, qApp->desktop()->height() - qApp->desktop()->height()*0.8, 250, 120));
+    anim_come_out->setEndValue(QRectF(desk_rect.width()-250, desk_rect.height() - desk_rect.height()*0.8, 250, 120));
 
     anim_come_in = new QPropertyAnimation ( ui_2->widget, "geometry" );
     anim_come_in->setDuration(1500);
     anim_come_in->setEasingCurve(QEasingCurve::OutQuad);
-    anim_come_in->setEndValue(QRectF(qApp->desktop()->width()+1, qApp->desktop()->height() - qApp->desktop()->height()*0.8, 250, 120));
+    anim_come_in->setEndValue(QRectF(desk_rect.width()+1, desk_rect.height() - desk_rect.height()*0.8, 250, 120));
+
+    connect(this->anim_come_in, SIGNAL(finished()), ui_2->widget, SLOT(hide()));
+    connect(this->anim_come_in, SIGNAL(finished()), this, SLOT(InitNotifAnim()));
 }
 
 void Main_window::SetNotifGeom()
 {
-    QDesktopWidget* desk = qApp->desktop();
-    int desk_w = desk->width();
-    int desk_h = desk->height();
+    QDesktopWidget* m = QApplication::desktop();
+    QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
 
-    ui_2->widget->setGeometry(desk_w+1, desk_h - desk_h * 0.8, 250, 120);
+    int desk_x = desk_rect.width();
+    int desk_y = desk_rect.height();
+    int x = ui_2->widget->width();
+    int y = ui_2->widget->height();
+    ui_2->widget->move(desk_x + 1, desk_y - desk_y * 0.8);
+
+
+//    QDesktopWidget* desk = qApp->desktop();
+//    int desk_w = desk->width();
+//    int desk_h = desk->height();
+
+//    ui_2->widget->setGeometry(desk_w+1, desk_h - desk_h * 0.8, 250, 120);
 }
 
 void Main_window::slotNotifOpen()
@@ -499,12 +536,12 @@ void Main_window::slotNotifOpen()
 void Main_window::slotNotifClose()
 {
     anim_come_in->start();
-    InitNotifAnim();
-    CamStream::is_popup_showed = false;
 
+    CamStream::is_popup_showed = false;
 
     ui_2->btn_accept->hide();
     ui_2->btn_notnow->hide();
+    //InitNotifAnim();
 
 }
 
@@ -692,6 +729,11 @@ void Main_window::slotSetSettings()
 void Main_window::slotSendFeedback()
 {
     QDesktopServices::openUrl(QUrl("http://viewaide.com/#contacts"));
+}
+
+void Main_window::slotHideNotifWidg()
+{
+    ui_2->widget->hide();
 }
 
 bool Main_window::CheckOptions()

@@ -25,6 +25,11 @@ int main(int argc, char *argv[])
 
     reg_and_log.show();
 
+    //QPropertyAnimation::finished()
+    //QObject::connect(m_w.anim_come_in, SIGNAL(finished()), m_w.ui_2->widget, SLOT(hide()));
+    //QObject::connect(m_w.anim_come_in, SIGNAL(finished()), m_w.anim_come_in, SLOT(deleted()));
+    //QObject::connect(m_w.anim_come_in, SIGNAL(finished()), &m_w, SLOT(InitNotifAnim()));
+
     QObject::connect(m_w.ui_2->cmb_webcam, SIGNAL(currentIndexChanged(int)), stream, SLOT(slotSaveSettings(int)) );
     QObject::connect(m_w.ui_2->cmb_lang, SIGNAL(currentIndexChanged(int)), stream, SLOT(slotSaveSettings(int)) );
     QObject::connect(m_w.ui_2->checkb_autorun, SIGNAL(stateChanged(int)), stream, SLOT(slotSaveSettings(int)));
