@@ -17,8 +17,6 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
     ui->setupUi(this);
     ui_2->setupUi(this);
 
-
-
     ui_2->btn_accept->hide();
     ui_2->btn_notnow->hide();
 
@@ -64,6 +62,12 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
 
     tray->setToolTip("Viewaide");
 
+    #ifdef Q_OS_MAC
+    ui->btn_close->move(ui->lbl_title->pos());
+    ui_2->btn_close_2->move(ui_2->lbl_title->pos());
+    ui_2->btn_close2->move(ui_2->label_6->pos());
+    #endif
+
 //    QDesktopWidget* desk = qApp->desktop();
 //    int desk_w = desk->width();
 //    int desk_h = desk->height();
@@ -77,7 +81,6 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
     CenterToScreen(ui_2->widg_options);
     CenterToScreen(ui_2->widget_2);
     CenterToScreen(ui_2->widget_3);
-
 
     calibration_timer = new QTime;
 
