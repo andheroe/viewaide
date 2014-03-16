@@ -1172,7 +1172,7 @@ void CamStream::run()
                     calibration_mode_on=false;
                     qDebug()<<"Calibration: OK";
 
-                    QString path_to_file = QDir::homePath();
+                    path_to_file = QDir::homePath();
                     path_to_file += "/Viewaide/";
                     path_to_file += "options.txt";
                     SaveOptions(path_to_file);
@@ -1307,7 +1307,7 @@ void CamStream::run()
 
         if(alert_iteration_count>=alert_iterations_for_statistics)
         {
-            QString path_to_file = QDir::homePath();
+            path_to_file = QDir::homePath();
             path_to_file += "/Viewaide/";
             path_to_file += "statistics.txt";
             SaveStatistics(alert_activ_count,path_to_file);
