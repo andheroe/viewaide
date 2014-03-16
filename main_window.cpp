@@ -63,23 +63,6 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
     ui_2->lbl_title->setParent(ui_2->lbl_video);
 
     tray->setToolTip("Viewaide");
-<<<<<<< HEAD
-
-//    QDesktopWidget* desk = qApp->desktop();
-//    int desk_w = desk->width();
-//    int desk_h = desk->height();
-
-//    ui_2->widg_options->setGeometry(desk_w / 2 - ui_2->widg_options->width() / 2, desk_h / 2 - ui_2->widg_options->height() / 2, ui_2->widg_options->width(), ui_2->widg_options->height());
-
-//    ui_2->widget_2->setGeometry(desk_w / 2 - ui_2->widget_2->width() / 2, desk_h / 2 - ui_2->widget_2->height() / 2, ui_2->widget_2->width(), ui_2->widget_2->height());
-
-//    ui_2->widget_3->setGeometry(desk_w / 2 - ui_2->widget_3->width() / 2, desk_h / 2 - ui_2->widget_3->height() / 2, ui_2->widget_3->width(), ui_2->widget_3->height());
-
-    CenterToScreen(ui_2->widg_options);
-    CenterToScreen(ui_2->widget_2);
-    CenterToScreen(ui_2->widget_3);
-
-=======
 
     #ifdef Q_OS_MAC
     ui->btn_close->move(ui->lbl_title->pos());
@@ -100,7 +83,6 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
     CenterToScreen(ui_2->widg_options);
     CenterToScreen(ui_2->widget_2);
     CenterToScreen(ui_2->widget_3);
->>>>>>> master
 
     calibration_timer = new QTime;
 
