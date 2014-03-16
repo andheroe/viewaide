@@ -7,12 +7,13 @@ UpdateApp::UpdateApp(QObject *parent):
 
 QRegExp UpdateApp::reg_exp("(['vV']{1,1})([1-9]{1,1}[.][0-9]{1,1})");
 const QString UpdateApp::url_inf_file = "http://viewaide.com/update.inf";
-const QString UpdateApp::url_app_file = "http://viewaide.com/viewaide-win-setup.exe";
+//const QString UpdateApp::url_app_file = "http://viewaide.com/viewaide-win-setup.exe";
 const QString UpdateApp::inf_file = "update.inf";
 const QString UpdateApp::inf_file_prefix = "Update Version";
-const QString UpdateApp::app_file_prefix = "Update App";
+const QString UpdateApp::app_win_file_prefix = "WIN";
+const QString UpdateApp::app_mac_file_prefix = "MAC";
 const QString UpdateApp::begin_url_new_file = "http:";
-const QString UpdateApp::APP_VERSION = "1.0";
+const QString UpdateApp::APP_VERSION = "1.1";
 
 bool UpdateApp::CheckFile(const QString& path_file)
 {
@@ -32,7 +33,7 @@ void UpdateApp::slotAcceptDownload()
     QString path_to_file = QDir::homePath();
     path_to_file += "/Viewaide/";
     path_to_file += inf_file;
-    DownloadAnyFile(url_app_file);
+    DownloadAnyFile(new_version.at(1));
     QFile(path_to_file).remove();
 
 }
@@ -73,7 +74,7 @@ void UpdateApp::slotDoneLoad(const QString& file_name)
         if ( CompareVersions(new_version.at(0)) )
             sigUpdateOrReject();
     }
-    else if ( file_name == "viewaide-win-setup.exe" )
+    else if ( file_name == new_version.at(1).section('/', -1) )
     {
         #ifdef Q_OS_WIN
             int result = (int)::ShellExecuteA(0, "open", path_to_file.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
@@ -115,12 +116,22 @@ QStringList UpdateApp::ParseFile(const QString& path_file)
                parsed_file.push_back(str_version);
             }
         }
-        else if ( str.startsWith(app_file_prefix))
+        #ifdef Q_OS_WIN
+        else if ( str.startsWith(app_win_file_prefix))
         {
             int ind = str.indexOf(begin_url_new_file);
             QString str_url = str.mid(ind);
             parsed_file.push_back(str_url);
         }
+        #endif
+        #ifdef Q_OS_MAC
+        else if ( str.startsWith(app_mac_file_prefix))
+        {
+            int ind = str.indexOf(begin_url_new_file);
+            QString str_url = str.mid(ind);
+            parsed_file.push_back(str_url);
+        }
+        #endif
     }
     file.close();
     return parsed_file;

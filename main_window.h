@@ -63,10 +63,11 @@ public:
 
     static bool block_popup_msg;
 
+    QPropertyAnimation* anim_come_in;
+
 private:
     static const int sleep_time;
 
-    QPropertyAnimation* anim_come_in;
     QPropertyAnimation* anim_come_out;
 
     static bool cam_busy;
@@ -103,10 +104,12 @@ private:
 
     inline void Calibration();
 
-    inline void InitNotifAnim();
+
     inline void SetNotifGeom();
 
     inline bool CheckOptions();
+
+    void CenterToScreen(QWidget* widget);
 
 protected:
     void mouseMoveEvent(QMouseEvent* event);
@@ -124,7 +127,7 @@ public slots:
     void slotReceiveInfo( bool checked );
     void slotToTray();
 
-
+    void InitNotifAnim();
 
     void slotNotifOpen();
     void slotNotifClose();
@@ -166,6 +169,8 @@ public slots:
 
     void slotSetSettings();
     void slotSendFeedback();
+
+    void slotHideNotifWidg();
 
 signals:
     void sigSendCalibStage(calibration_stages stage);

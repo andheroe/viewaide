@@ -32,10 +32,11 @@ public:
 private:
     static QRegExp reg_exp;
     static const QString url_inf_file;
-    static const QString url_app_file;
+    //static const QString url_app_file;
     static const QString inf_file;
     static const QString inf_file_prefix;
-    static const QString app_file_prefix;
+    static const QString app_win_file_prefix;
+    static const QString app_mac_file_prefix;
     static const QString begin_url_new_file;
     static const QString APP_VERSION;
 
