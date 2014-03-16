@@ -1,4 +1,4 @@
-#include "main_window.h"
+﻿#include "main_window.h"
 
 const int Main_window::sleep_time = 5000;
 bool Main_window::cam_busy = false;
@@ -16,6 +16,8 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
 {
     ui->setupUi(this);
     ui_2->setupUi(this);
+
+
 
     ui_2->btn_accept->hide();
     ui_2->btn_notnow->hide();
@@ -61,6 +63,23 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
     ui_2->lbl_title->setParent(ui_2->lbl_video);
 
     tray->setToolTip("Viewaide");
+<<<<<<< HEAD
+
+//    QDesktopWidget* desk = qApp->desktop();
+//    int desk_w = desk->width();
+//    int desk_h = desk->height();
+
+//    ui_2->widg_options->setGeometry(desk_w / 2 - ui_2->widg_options->width() / 2, desk_h / 2 - ui_2->widg_options->height() / 2, ui_2->widg_options->width(), ui_2->widg_options->height());
+
+//    ui_2->widget_2->setGeometry(desk_w / 2 - ui_2->widget_2->width() / 2, desk_h / 2 - ui_2->widget_2->height() / 2, ui_2->widget_2->width(), ui_2->widget_2->height());
+
+//    ui_2->widget_3->setGeometry(desk_w / 2 - ui_2->widget_3->width() / 2, desk_h / 2 - ui_2->widget_3->height() / 2, ui_2->widget_3->width(), ui_2->widget_3->height());
+
+    CenterToScreen(ui_2->widg_options);
+    CenterToScreen(ui_2->widget_2);
+    CenterToScreen(ui_2->widget_3);
+
+=======
 
     #ifdef Q_OS_MAC
     ui->btn_close->move(ui->lbl_title->pos());
@@ -81,6 +100,7 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
     CenterToScreen(ui_2->widg_options);
     CenterToScreen(ui_2->widget_2);
     CenterToScreen(ui_2->widget_3);
+>>>>>>> master
 
     calibration_timer = new QTime;
 
@@ -515,6 +535,7 @@ void Main_window::SetNotifGeom()
 {
     QDesktopWidget* m = QApplication::desktop();
     QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
+<<<<<<< HEAD
 
     int desk_x = desk_rect.width();
     int desk_y = desk_rect.height();
@@ -522,6 +543,15 @@ void Main_window::SetNotifGeom()
     int y = ui_2->widget->height();
     ui_2->widget->move(desk_x + 1, desk_y - desk_y * 0.8);
 
+=======
+
+    int desk_x = desk_rect.width();
+    int desk_y = desk_rect.height();
+    int x = ui_2->widget->width();
+    int y = ui_2->widget->height();
+    ui_2->widget->move(desk_x + 1, desk_y - desk_y * 0.8);
+
+>>>>>>> master
 
 //    QDesktopWidget* desk = qApp->desktop();
 //    int desk_w = desk->width();
@@ -840,5 +870,3 @@ void Main_window::slotCloseWindow()
     this->close();
     qApp->exit();
 }
-
-
