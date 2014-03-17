@@ -513,23 +513,12 @@ void Main_window::SetNotifGeom()
 {
     QDesktopWidget* m = QApplication::desktop();
     QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
-//<<<<<<< HEAD
 
     int desk_x = desk_rect.width();
     int desk_y = desk_rect.height();
     int x = ui_2->widget->width();
     int y = ui_2->widget->height();
     ui_2->widget->move(desk_x + 1, desk_y - desk_y * 0.8);
-
-//=======
-
-//    int desk_x = desk_rect.width();
-//    int desk_y = desk_rect.height();
-//    int x = ui_2->widget->width();
-//    int y = ui_2->widget->height();
-//    ui_2->widget->move(desk_x + 1, desk_y - desk_y * 0.8);
-
-//>>>>>>> master
 
 //    QDesktopWidget* desk = qApp->desktop();
 //    int desk_w = desk->width();
