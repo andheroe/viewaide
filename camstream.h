@@ -30,6 +30,9 @@
 using namespace cv;
 using namespace std;
 
+//for metrics
+extern bool save_metrics;
+
 struct options_koeffs
 {
     float eye_open_koeff;
@@ -225,16 +228,14 @@ private:
     static videoInput VI;
     #endif
 
-    static QFile log_file;
-    static QTextStream log;
-
-
-
 protected:
     QImage ToQImage(IplImage* image);
     void run();
 
 public:
+    static QFile log_file;
+    static QTextStream log;
+
     bool calibration_mode_on;
     static bool is_popup_showed;
     CamStream();
@@ -301,6 +302,7 @@ public slots:
     void pause();
     void slotAutoRun(bool active);
     void slotSaveSettings(int state);
+    void slotSaveMetrics();
 };
 
 #endif // CAMSTREAM_H

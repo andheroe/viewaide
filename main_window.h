@@ -21,6 +21,7 @@
 #include <QTime>
 #include <QPainter>
 #include <QDesktopWidget>
+#include <QSysInfo>
 
 #include "ui_main_window.h"
 #include "ui_form.h"

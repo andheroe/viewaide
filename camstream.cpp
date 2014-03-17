@@ -4,11 +4,10 @@ QFile CamStream::log_file;
 QTextStream CamStream::log;
 bool CamStream::is_popup_showed = true;
 
+bool save_metrics=false;
 
 CamStream::CamStream()
 {
-    //
-
     capture=0;
 
     // system bool
@@ -153,7 +152,7 @@ CamStream::CamStream()
 
     QString path_to_file = QDir::homePath();
     path_to_file += "/Viewaide/";
-    path_to_file += "log_camstream.txt";
+    path_to_file += "log.txt";
 
     slotAutoRun(true);
 
@@ -161,12 +160,13 @@ CamStream::CamStream()
     log_file.open(QIODevice::WriteOnly | QIODevice::Text);
     log.setDevice(&log_file);
 
+    log<<UpdateApp::APP_VERSION<<"\n";
     log<<"CamStream object created"<<"\n";
 }
 
 CamStream::~CamStream()
 {
-    log<<"CamStream object deleted"<<"\n";
+    log<<"CamStream object deleted";
     log_file.close();
 }
 
@@ -179,7 +179,7 @@ QImage CamStream::ToQImage(IplImage* image)
 
 void CamStream::pause()
 {
-    log<<"Try to pause the thread"<<"\n";
+    log<<"Pause camstream thread"<<"\n";
     if(pause_thread)
         return;
     pause_thread=true;
@@ -258,6 +258,11 @@ void CamStream::slotSaveSettings(int state)
     SaveSettings("settings.ini", sender_name, state);
 }
 
+void CamStream::slotSaveMetrics()
+{
+    save_metrics=true;
+}
+
 void CamStream::SaveSettings(QString filename, QString sender_name, int state)
 {
     QString path_to_file = QDir::homePath();
@@ -291,7 +296,7 @@ void CamStream::SaveSettings(QString filename, QString sender_name, int state)
 
 void CamStream::resume()
 {
-    log<<"Try to resume the thread"<<"\n";
+    log<<"Resume camstream thread"<<"\n";
     if(!pause_thread)
     {
         log<<"Thread was not paused\n";
@@ -303,7 +308,7 @@ void CamStream::resume()
 
 void CamStream::stop()
 {
-    log<<"Try to stop the thread"<<"\n";
+    log<<"Stop camstream thread"<<"\n";
     if(stop_thread)
         log<<"Thread is already stopped\n";
     stop_thread=true;
@@ -313,7 +318,6 @@ void CamStream::SetCalibrationMode(int msecs)
 {
     this->pause();
 
-    log<<"Calibration mode next "<<msecs<<" miliseconds"<<"\n";
     calibration_count=0;
     calibration_dist_sum=0;
     calibration_height_sum=0;
@@ -326,7 +330,7 @@ void CamStream::SetCalibrationMode(int msecs)
 
 void CamStream::AcceptNewOptions()
 {
-    log<<"Accepting new options"<<"\n";
+    log<<"Accepting new options\n";
     this->pause();
     options_cur=options_new;
     this->resume();
@@ -691,7 +695,6 @@ void CamStream::LoadOptions(QString filename)
 
 void CamStream::SaveStatistics(alert_activations alert_count,QString filename)
 {
-    log<<"Saving statistics"<<"\n";
     QFile file(filename);
     file.open(QIODevice::ReadWrite | QIODevice::Text);
 
@@ -772,9 +775,12 @@ void CamStream::SendStatisticsToServer(QStringList &list)
     ConnectWithServer obj;
     if(obj.netIsWorking())
     {
+        log<<"Send statistics\n";
         for(int i=0;i<list.size();++i)
-            obj.uploadAllData(login+" "+list.at(i),"http://viewaide.com/getstats.php");
+            obj.uploadAllData(login+" "+list.at(i),"http://viewaide.com/getstats.php","stats");
+        list.clear();
     }
+    log<<"Internet problems while sending statistics\n";
 }
 
 void CamStream::slotAlertOn()
@@ -944,7 +950,6 @@ void CamStream::SaveCurFaceKoeffs()
 void CamStream::run()
 {
     emit UnlockCam();
-    log<<"Thread is running"<<"\n";
     stop_thread=false;
 
 
@@ -1326,9 +1331,6 @@ void CamStream::run()
 
         msleep(75);
 
-//        if ((cvWaitKey(30)&255)==27)
-//            break;
-
         if(grey_frame)
             cvReleaseImage(&grey_frame);
         if(old_frame)
@@ -1349,6 +1351,5 @@ void CamStream::run()
 //    cvReleaseVideoWriter(&writer_alert);
 
     log<<"Thread closes"<<"\n";
-
     return;
 }

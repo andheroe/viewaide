@@ -128,7 +128,7 @@ background-color: rgb(74, 98, 101,0);
       <x>0</x>
       <y>50</y>
       <width>251</width>
-      <height>31</height>
+      <height>32</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -348,7 +348,7 @@ background-color: rgb(110, 129, 131);</string>
      <rect>
       <x>310</x>
       <y>30</y>
-      <width>91</width>
+      <width>105</width>
       <height>71</height>
      </rect>
     </property>

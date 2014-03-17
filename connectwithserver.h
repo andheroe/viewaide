@@ -17,7 +17,7 @@ public:
     explicit ConnectWithServer(QObject *parent = 0);
     void registration(QString,QString,QString,QString);
     void login(QString,QString);
-    void uploadAllData(QString, QString surl);
+    void uploadAllData(QString, QString surl, QString request_name);
     bool netIsWorking();
     
 signals:

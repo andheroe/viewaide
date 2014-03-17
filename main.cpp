@@ -100,8 +100,6 @@ int main(int argc, char *argv[])
     QObject::connect(m_w.act_logout, SIGNAL(triggered()), &reg_and_log, SLOT(show()));
     QObject::connect(m_w.act_logout, SIGNAL(triggered()), stream, SLOT(stop()));
 
-
-
     QObject::connect(m_w.ui_2->btn_close_2, SIGNAL(clicked()), m_w.ui_2->widget_3, SLOT(hide()));
     QObject::connect(m_w.ui_2->btn_close_2, SIGNAL(clicked()), &m_w, SLOT(slotToTray()));
 
@@ -183,6 +181,9 @@ int main(int argc, char *argv[])
 
     QObject::connect(&reg_and_log, SIGNAL(sigRunMainProgram()), &m_w, SLOT(slotWhatModeRun()) );
     QObject::connect(&reg_and_log, SIGNAL(sigRunMainProgram()), &m_w, SLOT(slotSetSettings()) );
+
+    //for metrics
+    QObject::connect(&reg_and_log, SIGNAL(signalSaveMetrics()), stream, SLOT(slotSaveMetrics()) );
 
     return a.exec();
 }

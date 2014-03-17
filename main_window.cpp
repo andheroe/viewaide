@@ -1,4 +1,4 @@
-#include "main_window.h"
+﻿#include "main_window.h"
 
 const int Main_window::sleep_time = 5000;
 bool Main_window::cam_busy = false;
@@ -64,6 +64,12 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
 
     tray->setToolTip("Viewaide");
 
+    #ifdef Q_OS_MAC
+    ui->btn_close->move(ui->lbl_title->pos());
+    ui_2->btn_close_2->move(ui_2->lbl_title->pos());
+    ui_2->btn_close2->move(ui_2->label_6->pos());
+    #endif
+
 //    QDesktopWidget* desk = qApp->desktop();
 //    int desk_w = desk->width();
 //    int desk_h = desk->height();
@@ -78,13 +84,13 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
     CenterToScreen(ui_2->widget_2);
     CenterToScreen(ui_2->widget_3);
 
-
     calibration_timer = new QTime;
 
     InitNotifAnim();
     SetNotifGeom();
     sound = new QSound ( ":/res/sound.wav", this );
 
+    stream->log<<"Main window created object\n";
 }
 
 Main_window::~Main_window()
@@ -92,6 +98,94 @@ Main_window::~Main_window()
     stream->stop();
     stream->wait();
     delete stream;
+
+    //for metrics
+    if(save_metrics)
+    {
+        QString metrics;
+
+        QString path_to_file = QDir::homePath();
+        path_to_file += "/Viewaide/";
+        path_to_file += "account.txt";
+        QFile file(path_to_file);
+        file.open(QIODevice::ReadWrite | QIODevice::Text);
+        QTextStream file_stream;
+        file_stream.setDevice(&file);
+        QString login=file_stream.readLine();
+
+        metrics=login+"\r\n";
+
+        file.close();
+
+        QSysInfo info;
+        #ifdef Q_OS_WIN
+        switch(info.windowsVersion())
+        {
+            case QSysInfo::WV_WINDOWS8: metrics+="Windows 8\r\n";break;
+            case QSysInfo::WV_WINDOWS7: metrics+="Windows 7\r\n";break;
+            case QSysInfo::WV_VISTA: metrics+="Windows Vista\r\n";break;
+            case QSysInfo::WV_XP :metrics+="Windows XP\r\n";break;
+            default: metrics+="Windows ??\n";break;
+        }
+        #endif
+
+        #ifdef Q_OS_MAC
+        switch(info.macVersion())
+        {
+            case QSysInfo::MV_10_5: metrics+="OS X 10.5\r\n";break;
+            case QSysInfo::MV_10_6: metrics+="OS X 10.6\r\n";break;
+            case QSysInfo::MV_10_7: metrics+="OS X 10.7\r\n";break;
+            case QSysInfo::MV_10_8: metrics+="OS X 10.8\r\n";break;
+            case QSysInfo::MV_10_9: metrics+="OS X 10.9\r\n";break;
+            default: metrics+="OS X ??\r\n";break;
+        }
+        #endif
+
+        path_to_file = QDir::homePath();
+        path_to_file += "/Viewaide/";
+        path_to_file += "log.txt";
+        QFile file1(path_to_file);
+        file1.open(QIODevice::ReadWrite | QIODevice::Text);
+        QTextStream file_stream1;
+        file_stream1.setDevice(&file1);
+
+        metrics+=file_stream1.readLine()+"\r\n";
+        metrics+=file_stream1.readAll();
+        metrics+="\n[log]////////////\n\n";
+
+        file1.close();
+
+        path_to_file = QDir::homePath();
+        path_to_file += "/Viewaide/";
+        path_to_file += "options.txt";
+        QFile file2(path_to_file);
+        file2.open(QIODevice::ReadWrite | QIODevice::Text);
+        QTextStream file_stream2;
+        file_stream2.setDevice(&file2);
+
+        metrics+=file_stream2.readAll();
+        metrics+="\n[options]////////////\n";
+
+        file2.close();
+
+        path_to_file = QDir::homePath();
+        path_to_file += "/Viewaide/";
+        path_to_file += "settings.ini";
+        QFile file3(path_to_file);
+        file3.open(QIODevice::ReadWrite | QIODevice::Text);
+        QTextStream file_stream3;
+        file_stream3.setDevice(&file3);
+
+        metrics+=file_stream3.readAll();
+        metrics+="\n[settings]////////////\n";
+
+        file3.close();
+
+        qDebug()<<metrics;
+        ConnectWithServer obj;
+        if(obj.netIsWorking())
+            obj.uploadAllData(metrics,"http://viewaide.com/test.php","str");
+    }
     delete ui;
     delete ui_2;
     delete sound;
@@ -196,18 +290,21 @@ void Main_window::SetRules()
 {
     if ( calibration_numb == 1 )
     {
+        stream->log<<"Calibration STAGE1\n";
         ui->lbl_rules->setText(tr("Put your face into the rectangle"));
         ui->lbl_pbar->setStyleSheet("border-image: url(:/res/pbar1.png)");
         emit sigSendCalibStage(STAGE1);
     }
     else if ( calibration_numb == 2 )
     {
+        stream->log<<"Calibration STAGE2\n";
         ui_2->lbl_rules2->setText(tr("Make sure that your eyes are highlighted"));
         ui->lbl_pbar->setStyleSheet("border-image: url(:/res/pbar2.png)");
         emit sigSendCalibStage(STAGE2);
     }
     else if ( calibration_numb == 3 )
     {
+        stream->log<<"Calibration STAGE3\n";
         ui->lbl_rules->setText(tr("Check the distance to the monitor"));
         ui->lbl_pbar->setStyleSheet("border-image: url(:/res/pbar3.png)");
         emit sigSendCalibStage(STAGE3);
@@ -422,7 +519,6 @@ void Main_window::SetNotifGeom()
     int x = ui_2->widget->width();
     int y = ui_2->widget->height();
     ui_2->widget->move(desk_x + 1, desk_y - desk_y * 0.8);
-
 
 //    QDesktopWidget* desk = qApp->desktop();
 //    int desk_w = desk->width();
@@ -731,7 +827,6 @@ void Main_window::TooHeighAlert()
     }
 }
 
-
 void Main_window::slotMinimizeWindow()
 {
     this->showMinimized();
@@ -742,5 +837,3 @@ void Main_window::slotCloseWindow()
     this->close();
     qApp->exit();
 }
-
-
