@@ -33,6 +33,7 @@ void DownloadFile::downloadFinished(QNetworkReply *data)
     QString path_to_file = QDir::homePath();
     path_to_file += "/Viewaide/";
     path_to_file += file_name;
+    qDebug()<<file_name+"  "+path_to_file;
     const QByteArray sdata = data->readAll();
     if ( sdata.length() == 0 )
         return;
