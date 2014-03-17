@@ -409,12 +409,13 @@ void RegAndLogIn::inputToApp()
         out << ui->lineEdit->text();
         out << ui->lineEdit_5->text();
         fileAccount.close();
-
-        //for metrics
-        emit signalSaveMetrics();
     }
 
     hide();
+
+    //for metrics
+    emit signalSaveMetrics();
+
     emit sigRunMainProgram();
     //Запуск приложения
 }

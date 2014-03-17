@@ -7,7 +7,8 @@ UpdateApp::UpdateApp(QObject *parent):
 
 QRegExp UpdateApp::reg_exp("(['vV']{1,1})([1-9]{1,1}[.][0-9]{1,1})");
 const QString UpdateApp::url_inf_file = "http://viewaide.com/update.inf";
-//const QString UpdateApp::url_app_file = "http://viewaide.com/viewaide-win-setup.exe";
+const QString UpdateApp::url_win_app_file = "http://viewaide.com/viewaide-win-setup.exe";
+const QString UpdateApp::url_mac_app_file = "http://viewaide.com/viewaide-mac-setup.pkg";
 const QString UpdateApp::inf_file = "update.inf";
 const QString UpdateApp::inf_file_prefix = "Update Version";
 const QString UpdateApp::app_win_file_prefix = "WIN";
@@ -33,9 +34,13 @@ void UpdateApp::slotAcceptDownload()
     QString path_to_file = QDir::homePath();
     path_to_file += "/Viewaide/";
     path_to_file += inf_file;
-    DownloadAnyFile(new_version.at(1));
+    #ifdef Q_OS_WIN
+    DownloadAnyFile(url_win_app_file);
+    #endif
+    #ifdef Q_OS_MAC
+    DownloadAnyFile(url_mac_app_file);
+    #endif
     QFile(path_to_file).remove();
-
 }
 
 void UpdateApp::slotRejectDownload()
@@ -74,7 +79,13 @@ void UpdateApp::slotDoneLoad(const QString& file_name)
         if ( CompareVersions(new_version.at(0)) )
             sigUpdateOrReject();
     }
-    else if ( file_name == new_version.at(1).section('/', -1) )
+
+    #ifdef Q_OS_WIN
+    else if ( file_name ==  url_win_app_file.section('/', -1) )
+    #endif
+    #ifdef Q_OS_MAC
+    else if ( file_name ==  url_mac_app_file.section('/', -1) )
+    #endif
     {
         #ifdef Q_OS_WIN
             int result = (int)::ShellExecuteA(0, "open", path_to_file.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
@@ -88,11 +99,13 @@ void UpdateApp::slotDoneLoad(const QString& file_name)
                 // error handling
             }
         #else
-            if (!QProcess::startDetached(path_to_file))
+            QString cmd = QString("open %1").arg(path_to_file);
+            if (!QProcess::startDetached(cmd))
             {
                 // error handling
             }
         #endif
+
         qApp->exit();
     }
 }

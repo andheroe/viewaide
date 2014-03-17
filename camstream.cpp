@@ -160,12 +160,13 @@ CamStream::CamStream()
     log_file.open(QIODevice::WriteOnly | QIODevice::Text);
     log.setDevice(&log_file);
 
+    log<<UpdateApp::APP_VERSION<<"\n";
     log<<"CamStream object created"<<"\n";
 }
 
 CamStream::~CamStream()
 {
-    log<<"CamStream object deleted"<<"\n";
+    log<<"CamStream object deleted";
     log_file.close();
 }
 

@@ -38,7 +38,12 @@ private:
     static const QString app_win_file_prefix;
     static const QString app_mac_file_prefix;
     static const QString begin_url_new_file;
+//for metrics
+public:
     static const QString APP_VERSION;
+private:
+    static const QString url_win_app_file;
+    static const QString url_mac_app_file;
 
     QStringList new_version;
 

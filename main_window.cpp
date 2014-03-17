@@ -113,7 +113,7 @@ Main_window::~Main_window()
         file_stream.setDevice(&file);
         QString login=file_stream.readLine();
 
-        metrics=login+"\n";
+        metrics=login+"\r\n";
 
         file.close();
 
@@ -121,10 +121,10 @@ Main_window::~Main_window()
         #ifdef Q_OS_WIN
         switch(info.windowsVersion())
         {
-            case QSysInfo::WV_WINDOWS8: metrics+="Windows 8\n";break;
-            case QSysInfo::WV_WINDOWS7: metrics+="Windows 7\n";break;
-            case QSysInfo::WV_VISTA: metrics+="Windows Vista\n";break;
-            case QSysInfo::WV_XP :metrics+="Windows XP\n";break;
+            case QSysInfo::WV_WINDOWS8: metrics+="Windows 8\r\n";break;
+            case QSysInfo::WV_WINDOWS7: metrics+="Windows 7\r\n";break;
+            case QSysInfo::WV_VISTA: metrics+="Windows Vista\r\n";break;
+            case QSysInfo::WV_XP :metrics+="Windows XP\r\n";break;
             default: metrics+="Windows ??\n";break;
         }
         #endif
@@ -132,16 +132,14 @@ Main_window::~Main_window()
         #ifdef Q_OS_MAC
         switch(info.macVersion())
         {
-            case QSysInfo::MV_10_5: metrics+="OS X 10.5\n";break;
-            case QSysInfo::MV_10_6: metrics+="OS X 10.6\n";break;
-            case QSysInfo::MV_10_7: metrics+="OS X 10.7\n";break;
-            case QSysInfo::MV_10_8: metrics+="OS X 10.8\n";break;
-            case QSysInfo::MV_10_9: metrics+="OS X 10.9\n";break;
-            default: metrics+="OS X ??\n";break;
+            case QSysInfo::MV_10_5: metrics+="OS X 10.5\r\n";break;
+            case QSysInfo::MV_10_6: metrics+="OS X 10.6\r\n";break;
+            case QSysInfo::MV_10_7: metrics+="OS X 10.7\r\n";break;
+            case QSysInfo::MV_10_8: metrics+="OS X 10.8\r\n";break;
+            case QSysInfo::MV_10_9: metrics+="OS X 10.9\r\n";break;
+            default: metrics+="OS X ??\r\n";break;
         }
         #endif
-
-        metrics+=QDir::homePath()+"\n";
 
         path_to_file = QDir::homePath();
         path_to_file += "/Viewaide/";
@@ -151,9 +149,9 @@ Main_window::~Main_window()
         QTextStream file_stream1;
         file_stream1.setDevice(&file1);
 
-        metrics+="\n[log]////////////\n";
+        metrics+=file_stream1.readLine()+"\r\n";
         metrics+=file_stream1.readAll();
-        metrics+="////////////\n";
+        metrics+="\n[log]////////////\n\n";
 
         file1.close();
 
@@ -165,9 +163,8 @@ Main_window::~Main_window()
         QTextStream file_stream2;
         file_stream2.setDevice(&file2);
 
-        metrics+="\n[options]////////////\n";
         metrics+=file_stream2.readAll();
-        metrics+="////////////\n";
+        metrics+="\n[options]////////////\n";
 
         file2.close();
 
@@ -179,9 +176,8 @@ Main_window::~Main_window()
         QTextStream file_stream3;
         file_stream3.setDevice(&file3);
 
-        metrics+="\n[settings]////////////\n";
         metrics+=file_stream3.readAll();
-        metrics+="////////////\n";
+        metrics+="\n[settings]////////////\n";
 
         file3.close();
 
@@ -517,7 +513,7 @@ void Main_window::SetNotifGeom()
 {
     QDesktopWidget* m = QApplication::desktop();
     QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
-<<<<<<< HEAD
+//<<<<<<< HEAD
 
     int desk_x = desk_rect.width();
     int desk_y = desk_rect.height();
@@ -525,15 +521,15 @@ void Main_window::SetNotifGeom()
     int y = ui_2->widget->height();
     ui_2->widget->move(desk_x + 1, desk_y - desk_y * 0.8);
 
-=======
+//=======
 
-    int desk_x = desk_rect.width();
-    int desk_y = desk_rect.height();
-    int x = ui_2->widget->width();
-    int y = ui_2->widget->height();
-    ui_2->widget->move(desk_x + 1, desk_y - desk_y * 0.8);
+//    int desk_x = desk_rect.width();
+//    int desk_y = desk_rect.height();
+//    int x = ui_2->widget->width();
+//    int y = ui_2->widget->height();
+//    ui_2->widget->move(desk_x + 1, desk_y - desk_y * 0.8);
 
->>>>>>> master
+//>>>>>>> master
 
 //    QDesktopWidget* desk = qApp->desktop();
 //    int desk_w = desk->width();
