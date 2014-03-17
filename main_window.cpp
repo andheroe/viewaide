@@ -490,8 +490,6 @@ void Main_window::ResetCalibration()
 
 void Main_window::InitNotifAnim()
 {
-    qDebug() << "looool";
-
     QDesktopWidget* m = QApplication::desktop();
     QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
 
