@@ -763,6 +763,16 @@ void CamStream::SaveStatistics(alert_activations alert_count,QString filename)
 
 void CamStream::SendStatisticsToServer(QStringList &list)
 {
+    while(true)
+    {
+        QThread::msleep(100);
+        if ( !is_popup_showed )
+        {
+            emit sigCheckUpdate();
+            break;
+        }
+    }
+
     QString path_to_file = QDir::homePath();
     path_to_file += "/Viewaide/";
     path_to_file += "account.txt";

@@ -389,8 +389,11 @@ void RegAndLogIn::isAccCreate()
     path_to_file += "/Viewaide/";
     path_to_file += "account.txt";
     QFile accountFile(path_to_file);
-    if(accountFile.open(QIODevice::ReadOnly))
+    accountFile.open(QIODevice::ReadOnly);
+    const QByteArray data = accountFile.readAll();
+    if( data.length() > 0 )
     {
+        qDebug() << data;
         emit fileWasCreate();
     }
     accountFile.close();
@@ -402,15 +405,15 @@ void RegAndLogIn::inputToApp()
     path_to_file += "/Viewaide/";
     path_to_file += "account.txt";
     QFile fileAccount(path_to_file);
-    if ( !fileAccount.exists() )
+    fileAccount.open(QIODevice::WriteOnly);
+    QByteArray data = fileAccount.readAll();
+    if ( data.length() == 0 )
     {
-        fileAccount.open(QIODevice::WriteOnly);
         QTextStream out(&fileAccount);
         out << ui->lineEdit->text();
-        out << ui->lineEdit_5->text();
-        fileAccount.close();
+        out << ui->lineEdit_5->text();      
     }
-
+    fileAccount.close();
     hide();
 
     //for metrics
