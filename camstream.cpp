@@ -190,13 +190,6 @@ void CamStream::pause()
 void CamStream::slotAutoRun( bool active )
 {
     #ifdef Q_OS_WIN
-//    QString old_path = QCoreApplication::applicationDirPath();
-//    old_path += "/Viewaide.exe";
-//    QString path = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).at(0);
-//    path += "/Startup";
-//    path += "/Viewaide";
-//    QFile::link(old_path,path);
-
     if ( active )
     {
         QString old_path = QCoreApplication::applicationDirPath();
@@ -216,38 +209,28 @@ void CamStream::slotAutoRun( bool active )
     }
     #endif
     #ifdef Q_OS_MAC
-    QSettings *setting = new QSettings(QDir::homePath() + QDir::separator() + "Library/Preferences/loginwindow.plist",QSettings::NativeFormat);
     if ( active )
     {
-        QDir dir(QCoreApplication::applicationDirPath());
-        dir.cdUp();
-        dir.cdUp();
+        QString path = QCoreApplication::applicationDirPath() + "/com.viewaide.plist";
+        QFile file(path);
+        if ( !file.open(QIODevice::ReadOnly) )
+            return;
 
-        QVariantList lst = qvariant_cast<QVariantList >(setting->value("AutoLaunchedApplicationDictionary"));
-        bool exist = false;
-        for (int i = 0; i < lst.count(); ++i)
-        {
-            QVariantMap prop = qvariant_cast<QVariantMap >(lst[i]);
-            if (prop["Path"] == dir.absolutePath())
-            {
-                exist = true;
-                break;
-            }
-        }
-
-        if (exist == false)
-        {
-            QVariantMap v;
-            v["Path"] = dir.absolutePath();
-            v["Hidden"] = false;
-            lst.append(v);
-            setting->setValue("AutoLaunchedApplicationDictionary",lst);
-        }
+        QByteArray data = file.readAll();
+        file.close();
+        QString dest = QDir::homePath() + QDir::separator() + "Library/LaunchAgents/com.viewaide.plist";
+        qDebug() << dest;
+        QFile file_dest(dest);
+        if ( !file_dest.open(QIODevice::ReadWrite) )
+            return;
+        file_dest.write(data);
+        file_dest.close();
     }
     else
     {
-       setting->remove("AutoLaunchedApplicationDictionary");
-
+        QString dest = QDir::homePath() + QDir::separator() + "Library/LaunchAgents/com.viewaide.plist";
+        QFile file_dest(dest);
+        file_dest.remove();
     }
     #endif
 }
@@ -269,27 +252,37 @@ void CamStream::SaveSettings(QString filename, QString sender_name, int state)
     path_to_file += "/Viewaide/";
     path_to_file += filename;
     QFile file(path_to_file);
-    file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Append);
-    file.seek(0);
-    while ( !file.atEnd() )
-    {
-        QString str = file.readLine();
-        QString line;
-        line.push_back(QString::number(state));
+    QTextStream out(&file);
+    QStringList list;
 
-        if ( str.startsWith(sender_name) )
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QString line = file.readAll();
+    file.close();
+    file.remove();
+
+    list = line.split(" ", QString::SkipEmptyParts);
+
+    int j = 0;
+    for ( j; j < list.length(); ++j )
+    {
+        if ( list.at(j) == sender_name )
         {
-            str.clear();
-            str.insert(0, line.toLower());
-            file.write(str.toUtf8());
+            list.replace(j+1, QString::number(state));
             break;
         }
     }
-    if ( file.atEnd() )
+
+    if ( j == list.length() )
     {
-        QTextStream file_stream;
-        file_stream.setDevice(&file);
-        file_stream << sender_name << endl << state << endl;
+        list.push_back(sender_name);
+        list.push_back(QString::number(state));
+    }
+
+    file.open(QIODevice::ReadOnly | QIODevice::Text | QIODevice::Append);
+    while ( !list.empty() )
+    {
+        out << list.first() << " ";
+        list.pop_front();
     }
     file.close();
 }

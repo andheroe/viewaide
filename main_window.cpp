@@ -17,8 +17,6 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
     ui->setupUi(this);
     ui_2->setupUi(this);
 
-
-
     ui_2->btn_accept->hide();
     ui_2->btn_notnow->hide();
 
@@ -181,7 +179,7 @@ Main_window::~Main_window()
 
         file3.close();
 
-        qDebug()<<metrics;
+        //qDebug()<<metrics;
         ConnectWithServer obj;
         if(obj.netIsWorking())
             obj.uploadAllData(metrics,"http://viewaide.com/test.php","str");
@@ -692,36 +690,28 @@ void Main_window::slotSetSettings()
     path_to_file += "settings.ini";
     QFile file(path_to_file);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
-    while ( !file.atEnd() )
-    {
-        QString str = file.readLine();
-        if ( str.startsWith("cmb_lang") )
-        {
-            str = file.readLine();
-            ui_2->cmb_lang->setCurrentIndex(str.toInt());
-        }
-        else if ( str.startsWith("cmb_webcam") )
-        {
-            str = file.readLine();
-            ui_2->cmb_webcam->setCurrentIndex(str.toInt());
-        }
-        else if ( str.startsWith("checkb_visual") )
-        {
-            str = file.readLine();
-            ui_2->checkb_visual->setChecked(str.toInt());
-        }
-        else if ( str.startsWith("checkb_voice") )
-        {
-            str = file.readLine();
-            ui_2->checkb_voice->setChecked(str.toInt());
-        }
-        else if ( str.startsWith("checkb_autorun") )
-        {
-            str = file.readLine();
-            ui_2->checkb_autorun->setChecked(str.toInt());
-        }
-    }
+    QString line = file.readAll();
+    file.close();
 
+    QStringList list = line.split(" ", QString::SkipEmptyParts);
+
+    while ( !list.empty() )
+    {
+        QString str = list.first();
+        list.pop_front();
+        QString rez = list.first();
+        list.pop_front();
+        if ( str.startsWith("cmb_lang") )
+            ui_2->cmb_lang->setCurrentIndex(rez.toInt());
+        else if ( str.startsWith("cmb_webcam") )
+            ui_2->cmb_webcam->setCurrentIndex(rez.toInt());
+        else if ( str.startsWith("checkb_visual") )
+            ui_2->checkb_visual->setChecked(rez.toInt());
+        else if ( str.startsWith("checkb_voice") )
+            ui_2->checkb_voice->setChecked(rez.toInt());
+        else if ( str.startsWith("checkb_autorun") )
+            ui_2->checkb_autorun->setChecked(rez.toInt());
+    }
 }
 
 void Main_window::slotSendFeedback()
