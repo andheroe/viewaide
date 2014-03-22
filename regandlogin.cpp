@@ -392,10 +392,7 @@ void RegAndLogIn::isAccCreate()
     accountFile.open(QIODevice::ReadOnly);
     const QByteArray data = accountFile.readAll();
     if( data.length() > 0 )
-    {
-        qDebug() << data;
         emit fileWasCreate();
-    }
     accountFile.close();
 }
 
@@ -405,7 +402,7 @@ void RegAndLogIn::inputToApp()
     path_to_file += "/Viewaide/";
     path_to_file += "account.txt";
     QFile fileAccount(path_to_file);
-    fileAccount.open(QIODevice::WriteOnly);
+    fileAccount.open(QIODevice::ReadWrite);
     QByteArray data = fileAccount.readAll();
     if ( data.length() == 0 )
     {
