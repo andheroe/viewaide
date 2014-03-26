@@ -392,10 +392,7 @@ void RegAndLogIn::isAccCreate()
     accountFile.open(QIODevice::ReadOnly);
     const QByteArray data = accountFile.readAll();
     if( data.length() > 0 )
-    {
-        qDebug() << data;
         emit fileWasCreate();
-    }
     accountFile.close();
 }
 
