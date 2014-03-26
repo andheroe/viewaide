@@ -405,7 +405,7 @@ void RegAndLogIn::inputToApp()
     path_to_file += "/Viewaide/";
     path_to_file += "account.txt";
     QFile fileAccount(path_to_file);
-    fileAccount.open(QIODevice::WriteOnly);
+    fileAccount.open(QIODevice::ReadWrite);
     QByteArray data = fileAccount.readAll();
     if ( data.length() == 0 )
     {

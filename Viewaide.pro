@@ -18,7 +18,7 @@ TEMPLATE = app
 unix {
 INCLUDEPATH += ../Viewaide/MAC_opencv/include
 
-LIBS += -L/usr/local/lib \
+LIBS += -L/opt/local/lib \
 -lopencv_core \
 -lopencv_highgui \
 -lopencv_imgproc \
