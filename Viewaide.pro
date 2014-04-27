@@ -7,8 +7,16 @@
 QT += core gui
 QT += multimedia multimediawidgets
 QT += webkitwidgets
+QT += widgets
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+macx {
+   QMAKE_CXXFLAGS_RELEASE += -fvisibility=hidden
+   QMAKE_CXXFLAGS_DEBUG += -fvisibility=hidden
+   QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.8
+   QMAKE_MAC_SDK = macosx10.8
+   QMAKE_CFLAGS += -mmacosx-version-min=10.8
+   QMAKE_CXXFLAGS += -mmacosx-version-min=10.8
+}
 
 TARGET = Viewaide
 TEMPLATE = app
@@ -18,7 +26,7 @@ TEMPLATE = app
 unix {
 INCLUDEPATH += ../Viewaide/MAC_opencv/include
 
-LIBS += -L/usr/local/lib \
+LIBS += -L/opt/local/lib \
 -lopencv_core \
 -lopencv_highgui \
 -lopencv_imgproc \

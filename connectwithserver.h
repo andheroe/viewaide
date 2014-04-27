@@ -35,7 +35,7 @@ public slots:
 private:
     QNetworkReply *rep;
     QNetworkReply *netReply;
-    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QNetworkAccessManager *manager;
     QNetworkRequest req;
 
 private slots:
