@@ -391,7 +391,7 @@ void Main_window::changeEvent(QEvent * event)
         ui_2->checkb_voice->setText(tr("Sound"));
         ui_2->label_3->setText(tr("Setup is complete"));
         ui_2->btn_start->setText(tr("Launch"));
-        ui_2->btn_accept->setText(tr("Update"));
+        ui_2->btn_accept->setText(tr("Perform"));
         ui_2->btn_notnow->setText(tr("Later"));
         ui_2->btn_check_update->setText(tr("Check update"));
         ui_2->checkb_autorun->setText(tr("Autorun"));
@@ -614,8 +614,8 @@ void Main_window::slotDrawUpdWnd()
         slotBlockPopupMsg(true);
         ui_2->btn_accept->show();
         ui_2->btn_notnow->show();
-        ui_2->btn_accept->setText("Update");
-        ui_2->btn_notnow->setText("Later");
+        ui_2->btn_accept->setText(tr("Perform"));
+        ui_2->btn_notnow->setText(tr("Later"));
         ui_2->label_7->setGeometry(0,5,250,61);
         ui_2->label_7->setText(tr("The new version is available\nUpgrade now?"));
         ui_2->btn_options->hide();
@@ -651,8 +651,8 @@ void Main_window::slotDrawGymWnd()
 
         slotBlockPopupMsg(true);
         ui_2->btn_accept->show();
-        ui_2->btn_accept->setText("Perform");
-        ui_2->btn_notnow->setText("Later");
+        ui_2->btn_accept->setText(tr("Perform"));
+        ui_2->btn_notnow->setText(tr("Later"));
         ui_2->btn_notnow->show();
         ui_2->label_7->setGeometry(0,5,250,61);
         ui_2->label_7->setText(tr("Your eyes need to rest.\nPerform personalized gym?"));
@@ -785,6 +785,12 @@ void Main_window::slotDoGym()
 void Main_window::slotHideNotifWidg()
 {
     ui_2->widget->hide();
+}
+
+void Main_window::slotShowMainWindow(QSystemTrayIcon::ActivationReason reason)
+{
+    if ( reason == QSystemTrayIcon::DoubleClick )
+        ui_2->widget_3->show();
 }
 
 bool Main_window::CheckOptions()

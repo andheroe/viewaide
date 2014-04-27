@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     QObject::connect(m_w.ui_2->cmb_webcam, SIGNAL(currentIndexChanged(int)), &m_w, SLOT(slotChangeCam(int)) );
     QObject::connect(m_w.ui_2->cmb_lang, SIGNAL(currentIndexChanged(int)), &m_w, SLOT(slotChangeLang(int)) );
 
-    //QObject::connect ( m_w.tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), &m_w, SLOT(slotPopupMenu())  );
+    QObject::connect ( m_w.tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), &m_w, SLOT(slotShowMainWindow(QSystemTrayIcon::ActivationReason)));
 
     QObject::connect(stream, SIGNAL(UnlockCam()), &m_w, SLOT(slotUnlockCam()));
     QObject::connect(stream, SIGNAL(UnlockCam()), &s_t, SLOT(start()) );
