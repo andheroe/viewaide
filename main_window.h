@@ -52,6 +52,7 @@ public:
     const static int notif_pause;
 
     QAction* act_window;
+    QAction* act_gym;
     QAction* act_pause;
     QAction* act_options;
     QAction* act_calibrate;
@@ -169,6 +170,8 @@ public slots:
 
     void slotSetSettings();
     void slotSendFeedback();
+    void slotDoGym();
+    void slotDrawGymWnd();
 
     void slotHideNotifWidg();
 
@@ -183,6 +186,11 @@ signals:
     void sigAlertOff();
     void sigShowMainWindow();
     void sigShowNextTuneup();
+
+    void sigConnectAcceptToUpd();
+    void sigConnectRejectToUpd();
+    void sigConnectAcceptToGym();
+    void sigConnectRejectToGym();
 
 };
 

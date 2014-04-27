@@ -14,7 +14,7 @@ const QString UpdateApp::inf_file_prefix = "Update Version";
 const QString UpdateApp::app_win_file_prefix = "WIN";
 const QString UpdateApp::app_mac_file_prefix = "MAC";
 const QString UpdateApp::begin_url_new_file = "http:";
-const QString UpdateApp::APP_VERSION = "1.1";
+const QString UpdateApp::APP_VERSION = "1.2";
 
 bool UpdateApp::CheckFile(const QString& path_file)
 {
