@@ -144,7 +144,7 @@ CamStream::CamStream()
     left_eye_is_found=false;
     right_eye_is_found=false;
 
-    avg_user_time = 2000;
+    avg_user_time = 1500;
 
     QString path_to_dir = QDir::homePath();
     path_to_dir += "/Viewaide";
