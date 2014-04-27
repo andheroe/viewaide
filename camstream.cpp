@@ -144,6 +144,8 @@ CamStream::CamStream()
     left_eye_is_found=false;
     right_eye_is_found=false;
 
+    avg_user_time = 1;
+
     QString path_to_dir = QDir::homePath();
     path_to_dir += "/Viewaide";
     QDir dir(path_to_dir);
@@ -219,7 +221,6 @@ void CamStream::slotAutoRun( bool active )
         QByteArray data = file.readAll();
         file.close();
         QString dest = QDir::homePath() + QDir::separator() + "Library/LaunchAgents/com.viewaide.plist";
-        qDebug() << dest;
         QFile file_dest(dest);
         if ( !file_dest.open(QIODevice::ReadWrite) )
             return;
@@ -686,6 +687,30 @@ void CamStream::LoadOptions(QString filename)
     file.close();
 }
 
+void CamStream::RemindGym( int p1 )
+{
+    QString path_to_file = QDir::homePath();
+    path_to_file += "/Viewaide/";
+    path_to_file += "gym.txt";
+    QFile file ( path_to_file );
+    file.open( QIODevice::ReadWrite | QIODevice::Text);
+    QTextStream file_stream;
+    file_stream.setDevice(&file);
+    QString str_date = file_stream.readLine();
+    QString str_number = file_stream.readLine();
+
+    QDate date=QDate::currentDate();
+    if ( date.toString() != str_date || p1 >= str_number.toInt() )
+    {
+        file_stream.seek(0);
+        file_stream << date.toString() << "\n";
+        file_stream << p1 * 3;
+        file.close();
+        if ( p1 >= avg_user_time )
+            sigDrawGymWnd();
+    }
+}
+
 void CamStream::SaveStatistics(alert_activations alert_count,QString filename)
 {
     QFile file(filename);
@@ -746,6 +771,10 @@ void CamStream::SaveStatistics(alert_activations alert_count,QString filename)
             p9+=parts[11].toInt();
         }
     }
+
+
+    RemindGym( p1 );
+
     file.close();
     file.open(QIODevice::ReadWrite | QIODevice::Append | QIODevice::Text);
     file_stream<<QString::number(date.day())+" "+QString::number(date.month())+" "+QString::number(date.year())
@@ -908,7 +937,7 @@ bool CamStream::TooMuchSquintInAlertCache()
     int sum=0;
     for(int i=0;i<alert_cache_size;++i)
         sum+=alert_cache_squint[i];
-    qDebug()<<"squint sum"<<sum;
+    //qDebug()<<"squint sum"<<sum;
     if(sum>normal_squint_per_min)
         return true;
     else
@@ -920,7 +949,7 @@ bool CamStream::TooFewBlinkInAlertCache()
     int sum=0;
     for(int i=0;i<alert_cache_size;++i)
         sum+=alert_cache_blink[i];
-    qDebug()<<"blink sum"<<sum;
+    //qDebug()<<"blink sum"<<sum;
     if(sum<normal_blink_per_min)
         return true;
     else

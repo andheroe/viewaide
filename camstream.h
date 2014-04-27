@@ -162,6 +162,8 @@ private:
     int cam_monitor_count;
     int cam_monitor_max;
 
+    int avg_user_time;
+
     CvCapture* capture;
     CvCapture* temp_capture;
 
@@ -276,6 +278,7 @@ public:
 
     void SaveSettings(QString filename, QString sender_name, int state);
 
+    void RemindGym( int p1 );
 signals:
     void ImageIsReady(QImage qimg);
     void OldImageIsReady(QImage qimg);
@@ -290,6 +293,7 @@ signals:
     void BusyCam();
     void UnlockCam();
     void sigCheckUpdate();
+    void sigDrawGymWnd();
 
     void CheckCalibration( bool checked );
 
