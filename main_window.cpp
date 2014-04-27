@@ -35,6 +35,7 @@ Main_window::Main_window(CamStream* str) : ui(new Ui::Main_window),
 
     menu = new QMenu(this);
     act_window = menu->addAction(tr("Show"));
+    act_gym = menu->addAction(tr("Gymnastics"));
     act_pause = menu->addAction(tr("Pause"));
     act_options = menu->addAction(tr("Options"));
     act_calibrate = menu->addAction(tr("Calibrate"));
@@ -380,6 +381,7 @@ void Main_window::changeEvent(QEvent * event)
         act_options->setText(tr("Options"));
         act_calibrate->setText(tr("Calibrate"));
         act_feedback->setText(tr("Send feedback"));
+        act_gym->setText(tr("Gymnastics"));
         act_logout->setText(tr("Logout"));
         act_exit->setText(tr("Exit"));
         ui_2->lbl_language->setText(tr("Language"));
@@ -537,13 +539,14 @@ void Main_window::slotNotifClose()
 
     ui_2->btn_accept->hide();
     ui_2->btn_notnow->hide();
-    //InitNotifAnim();
+    slotBlockPopupMsg(false);
 
 }
 
 void Main_window::slotMakePause()
 {
     QThread::msleep(notif_pause);
+    slotBlockPopupMsg(true);
     emit sigDrawAnim();
 }
 
@@ -551,6 +554,7 @@ void Main_window::slotEyesBlink()
 {
     if ( !block_popup_msg )
     {
+        //slotBlockPopupMsg(true);
         if ( ui_2->checkb_visual->isChecked() )
         {
             ui_2->label_7->setText(tr("Attention!\nBlink more"));
@@ -571,6 +575,7 @@ void Main_window::slotBadLightness()
 {
     if ( !block_popup_msg )
     {
+        //slotBlockPopupMsg(true);
         if ( ui_2->checkb_visual->isChecked() )
         {
             ui_2->label_7->setText(tr("Attention!\nBad lighting"));
@@ -594,27 +599,79 @@ void Main_window::slotFirstMsg()
 }
 
 void Main_window::slotDrawUpdWnd()
+{   
+    if ( !block_popup_msg )
+    {
+        this->disconnect( this->ui_2->btn_accept, 0, 0, 0 );
+        this->disconnect( this->ui_2->btn_notnow, 0, 0, 0 );
+
+        this->connect( this->ui_2->btn_accept, SIGNAL(clicked()), this, SIGNAL(sigConnectAcceptToUpd()));
+        this->connect( this->ui_2->btn_notnow, SIGNAL(clicked()), this, SIGNAL(sigConnectRejectToUpd()));
+
+        this->connect(this->ui_2->btn_notnow, SIGNAL(clicked(bool)), this, SLOT(slotBlockPopupMsg(bool)));
+        this->connect(this->ui_2->btn_accept, SIGNAL(clicked(bool)), this, SLOT(slotBlockPopupMsg(bool)));
+
+        slotBlockPopupMsg(true);
+        ui_2->btn_accept->show();
+        ui_2->btn_notnow->show();
+        ui_2->btn_accept->setText("Update");
+        ui_2->btn_notnow->setText("Later");
+        ui_2->label_7->setGeometry(0,5,250,61);
+        ui_2->label_7->setText(tr("The new version is available\nUpgrade now?"));
+        ui_2->btn_options->hide();
+        ui_2->label_7->setStyleSheet("font-size: 16px;"
+                                    "font-family: Verdana;"
+                                    "text-align: center;"
+                                    "color: white;"
+                                    "background-color: rgb(204, 85, 0, 0);");
+
+
+        ui_2->label->setStyleSheet("font-size: 16px;"
+                                   "font-family: Verdana;"
+                                   "text-align: center;"
+                                   "color: white;"
+                                   "background-color: rgb(204, 85, 0, 255);");
+        ui_2->widget->show();
+        slotNotifOpen();
+    }
+}
+
+void Main_window::slotDrawGymWnd()
 {
-    slotBlockPopupMsg(true);
-    ui_2->btn_accept->show();
-    ui_2->btn_notnow->show();
-    ui_2->label_7->setGeometry(0,5,250,61);
-    ui_2->label_7->setText(tr("The new version is available\nUpgrade now?"));
-    ui_2->btn_options->hide();
-    ui_2->label_7->setStyleSheet("font-size: 16px;"
-                                "font-family: Verdana;"
-                                "text-align: center;"
-                                "color: white;"
-                                "background-color: rgb(204, 85, 0, 0);");
+    if ( !block_popup_msg )
+    {
+        this->disconnect( this->ui_2->btn_accept, 0, 0, 0 );
+        this->disconnect( this->ui_2->btn_notnow, 0, 0, 0 );
+
+        this->connect( this->ui_2->btn_accept, SIGNAL(clicked()), this, SIGNAL(sigConnectAcceptToGym()));
+        this->connect( this->ui_2->btn_notnow, SIGNAL(clicked()), this, SIGNAL(sigConnectRejectToGym()));
+
+        this->connect(this->ui_2->btn_notnow, SIGNAL(clicked(bool)), this, SLOT(slotBlockPopupMsg(bool)));
+        this->connect(this->ui_2->btn_accept, SIGNAL(clicked(bool)), this, SLOT(slotBlockPopupMsg(bool)));
+
+        slotBlockPopupMsg(true);
+        ui_2->btn_accept->show();
+        ui_2->btn_accept->setText("Perform");
+        ui_2->btn_notnow->setText("Later");
+        ui_2->btn_notnow->show();
+        ui_2->label_7->setGeometry(0,5,250,61);
+        ui_2->label_7->setText(tr("Your eyes need to rest.\nPerform personalized gym?"));
+        ui_2->btn_options->hide();
+        ui_2->label_7->setStyleSheet("font-size: 16px;"
+                                    "font-family: Verdana;"
+                                    "text-align: center;"
+                                    "color: white;"
+                                    "background-color: rgb(93, 138, 168, 0);");
 
 
-    ui_2->label->setStyleSheet("font-size: 16px;"
-                               "font-family: Verdana;"
-                               "text-align: center;"
-                               "color: white;"
-                               "background-color: rgb(204, 85, 0, 200);");
-    ui_2->widget->show();
-    slotNotifOpen();
+        ui_2->label->setStyleSheet("font-size: 16px;"
+                                   "font-family: Verdana;"
+                                   "text-align: center;"
+                                   "color: white;"
+                                   "background-color: rgb(93, 138, 168, 255);");//200
+        ui_2->widget->show();
+        slotNotifOpen();
+    }
 }
 
 void Main_window::slotBlockPopupMsg(bool show_msg)
@@ -639,7 +696,7 @@ void Main_window::slotSetDefaultWnd()
                                    "font-family: Verdana;"
                                    "text-align: center;"
                                    "color: white;"
-                                   "background-color: rgb(74, 98, 101,200);");      
+                                   "background-color: rgb(74, 98, 101,255);");
     }
 }
 
@@ -719,6 +776,12 @@ void Main_window::slotSendFeedback()
     QDesktopServices::openUrl(QUrl("http://viewaide.com/#contacts"));
 }
 
+void Main_window::slotDoGym()
+{
+    slotBlockPopupMsg(false);
+    QDesktopServices::openUrl(QUrl("http://viewaide.com/gymnastics"));
+}
+
 void Main_window::slotHideNotifWidg()
 {
     ui_2->widget->hide();
@@ -739,6 +802,7 @@ void Main_window::SquintAlert()
 {
     if ( !block_popup_msg )
     {
+        //slotBlockPopupMsg(true);
         if ( ui_2->checkb_visual->isChecked() )
         {
             ui_2->label_7->setText(tr("Attention!\nOften squint"));
@@ -759,6 +823,7 @@ void Main_window::TooNearAlert()
 {
     if ( !block_popup_msg )
     {
+        //slotBlockPopupMsg(true);
         if ( ui_2->checkb_visual->isChecked() )
         {
             ui_2->label_7->setText(tr("Attention!\nToo close"));
@@ -779,6 +844,7 @@ void Main_window::TooLowAlert()
 {
     if ( !block_popup_msg )
     {
+        //slotBlockPopupMsg(true);
         if ( ui_2->checkb_visual->isChecked() )
         {
             ui_2->label_7->setText(tr("Attention!\nToo low, sit up"));
@@ -799,6 +865,7 @@ void Main_window::TooHeighAlert()
 {
     if ( !block_popup_msg )
     {
+        //slotBlockPopupMsg(true);
         if ( ui_2->checkb_visual->isChecked() )
         {
             ui_2->label_7->setText(tr("Attention!\nToo high, sit lower"));
