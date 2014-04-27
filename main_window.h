@@ -174,6 +174,7 @@ public slots:
     void slotDrawGymWnd();
 
     void slotHideNotifWidg();
+    void slotShowMainWindow(QSystemTrayIcon::ActivationReason reason);
 
 signals:
     void sigSendCalibStage(calibration_stages stage);
