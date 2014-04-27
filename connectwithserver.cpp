@@ -3,6 +3,7 @@
 ConnectWithServer::ConnectWithServer(QObject *parent) :
     QObject(parent)
 {
+    manager = new QNetworkAccessManager();
 }
 
 
