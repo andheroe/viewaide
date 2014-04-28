@@ -693,13 +693,18 @@ void CamStream::RemindGym( int p1 )
     path_to_file += "/Viewaide/";
     path_to_file += "gym.txt";
     QFile file ( path_to_file );
-    file.open( QIODevice::ReadWrite | QIODevice::Text);
     QTextStream file_stream;
     file_stream.setDevice(&file);
+    QDate date=QDate::currentDate();
+    if ( !file.open( QIODevice::ReadWrite | QIODevice::Text) )
+    {
+        file_stream.seek(0);
+        file_stream << date.toString() << "\n";
+        file_stream << 1500;
+    }
     QString str_date = file_stream.readLine();
     QString str_number = file_stream.readLine();
 
-    QDate date=QDate::currentDate();
     if ( date.toString() != str_date || p1 >= str_number.toInt() )
     {
         file_stream.seek(0);
@@ -1207,7 +1212,7 @@ void CamStream::run()
                     options_new.max_eyes_height=(((calibration_eyes_height_sum/calibration_count)+frame->height/eyes_height_koeff)>frame->height)?frame->height:((calibration_eyes_height_sum/calibration_count)+frame->height/eyes_height_koeff);
                     options_new.min_eyes_height=(((calibration_eyes_height_sum/calibration_count)-frame->height/eyes_height_koeff)<0)?0:((calibration_eyes_height_sum/calibration_count)-frame->height/eyes_height_koeff);
                     calibration_mode_on=false;
-                    qDebug()<<"Calibration: OK";
+                    //qDebug()<<"Calibration: OK";
 
                     path_to_file = QDir::homePath();
                     path_to_file += "/Viewaide/";
@@ -1292,8 +1297,8 @@ void CamStream::run()
             if(alert_iteration_time.elapsed()>alert_iteration_time_msecs)
             {
                 alert_iteration_time=QTime::currentTime();
-                qDebug()<<squint_iteration_count;
-                qDebug()<<blink_iteration_count;
+                //qDebug()<<squint_iteration_count;
+                //qDebug()<<blink_iteration_count;
                 AddToAlertCacheSquint(squint_iteration_count);
                 AddToAlertCacheBlink(blink_iteration_count);
 

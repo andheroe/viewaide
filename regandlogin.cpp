@@ -12,9 +12,11 @@ RegAndLogIn::RegAndLogIn(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint);
     connect(this,SIGNAL(netIsNotWorking()),this,SLOT(hideLogin()));
+    connect(this,SIGNAL(netIsNotWorking()),this,SLOT(hideReg()));
     connect(this,SIGNAL(sigRepeatPlease()),this,SLOT(slotRepeatConnect()));
     connect(this, SIGNAL(windowCreate()), SLOT(isAccCreate()), Qt::QueuedConnection);
     connect(this,SIGNAL(fileWasCreate()),this,SLOT(inputToApp()));
+    connect(this,SIGNAL(sigWhatDataInReg()),this,SLOT(slotIsDataCheckInReg()));
     ui->pushButton_4->hide();
     ui->pushButton_5->hide();
     ui->pushButton_6->hide();
@@ -35,11 +37,11 @@ RegAndLogIn::RegAndLogIn(QWidget *parent) :
     this->setPalette(pal);
     QPixmap logomap(":/res/logo_login.png");
     ui->logo->setPixmap(logomap);
-    QRegExp firLasName("^[A-Z a-z а-я А-Я]{1,30}$");
+    QRegExp firLasName("^[A-Z a-z а-я А-Я]{0,30}$");
     QValidator *firLasNameValidator = new QRegExpValidator(firLasName, this);
     ui->lineEdit_3->setValidator(firLasNameValidator);
     ui->lineEdit_4->setValidator(firLasNameValidator);
-    QRegExp emailRX("^[a-z \\. \\@ \\- \\_ 0-9]{1,256}$");
+    QRegExp emailRX("^[a-z \\. \\@ \\- \\_ 0-9]{0,256}$");
     QValidator *emailValidator = new QRegExpValidator(emailRX, this);
     ui->lineEdit->setValidator(emailValidator);
     ui->lineEdit_5->setValidator(emailValidator);
@@ -163,6 +165,7 @@ void RegAndLogIn::on_pushButton_5_clicked()
         ui->lineEdit_6->setStyleSheet("background-color:rgb(255,100,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
+        dataCheckPass=false;
     }
     if(ui->lineEdit_3->text()=="")
     {
@@ -170,6 +173,7 @@ void RegAndLogIn::on_pushButton_5_clicked()
         ui->lineEdit_3->setStyleSheet("background-color:rgb(255,100,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
+        dataCheckFirst=false;
     }
     else
         ui->lineEdit_3->setStyleSheet("background-color:rgb(100,255,100);"
@@ -181,6 +185,7 @@ void RegAndLogIn::on_pushButton_5_clicked()
         ui->lineEdit_4->setStyleSheet("background-color:rgb(255,100,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
+        dataCheckLast=false;
     }
     else
         ui->lineEdit_4->setStyleSheet("background-color:rgb(100,255,100);"
@@ -192,7 +197,9 @@ void RegAndLogIn::on_pushButton_5_clicked()
         ui->lineEdit_5->setStyleSheet("background-color:rgb(255,100,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
+        dataCheckEmail=false;
     }
+    emit sigWhatDataInReg();
     if (empty)
         return;
     ConnectWithServer *regToServer;
@@ -257,7 +264,7 @@ void RegAndLogIn::on_lineEdit_editingFinished()
         }
     if(countD>1)
     {
-        ui->lineEdit_5->setStyleSheet("background-color:rgb(255,100,100);"
+        ui->lineEdit->setStyleSheet("background-color:rgb(255,100,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
         return;
@@ -275,14 +282,30 @@ void RegAndLogIn::on_lineEdit_editingFinished()
         {
             if(str.at(i)=='.')
                 dot++;
-            if((str.at(i)=='.')&&((i==pos+1)||(i==str.length()-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')))
+            if((str.at(i)=='.')&&((i==pos+1)||(i==str.length()-1)||(i==str.length()-2)||(str.at(i-1)=='.')||(str.at(i+1)=='.')
+                                  ||(str.at(i-1)=='_')||(str.at(i+1)=='_')||(str.at(i-1)=='-')||(str.at(i+1)=='-')))
+                check=false;
+            if((str.at(i)=='_')&&((i==pos+1)||(i==str.length()-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')
+                                  ||(str.at(i-1)=='_')||(str.at(i+1)=='_')||(str.at(i-1)=='-')||(str.at(i+1)=='-')))
+                check=false;
+            if((str.at(i)=='-')&&((i==pos+1)||(i==str.length()-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')
+                                  ||(str.at(i-1)=='_')||(str.at(i+1)=='_')||(str.at(i-1)=='-')||(str.at(i+1)=='-')))
                 check=false;
         }
         if (dot==0)
             check=false;
         for(int i=0;i<pos;i++)
-            if((str.at(i)=='.')&&((i==0)||(i==pos-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')))
+        {
+            if((str.at(i)=='.')&&((i==0)||(i==pos-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')||(str.at(i-1)=='_')
+                                  ||(str.at(i+1)=='_')||(str.at(i-1)=='-')||(str.at(i+1)=='-')))
                 check=false;
+            if((str.at(i)=='_')&&((i==0)||(i==pos-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')||(str.at(i-1)=='_')
+                                  ||(str.at(i+1)=='_')||(str.at(i-1)=='-')||(str.at(i+1)=='-')))
+                check=false;
+            if((str.at(i)=='-')&&((i==0)||(i==pos-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')||(str.at(i-1)=='_')
+                                  ||(str.at(i+1)=='_')||(str.at(i-1)=='-')||(str.at(i+1)=='-')))
+                check=false;
+        }
         if(check==false)
             ui->lineEdit->setStyleSheet("background-color:rgb(255,100,100);"
                                         "border: 2px solid rgb(17,164,192);"
@@ -310,8 +333,8 @@ void RegAndLogIn::on_lineEdit_5_editingFinished()
         ui->lineEdit_5->setStyleSheet("background-color:rgb(255,100,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
-        ui->checkBox->setEnabled(false);
-        ui->checkBox->setChecked(false);
+        dataCheckEmail=false;
+        emit sigWhatDataInReg();
         return;
     }
     if((pos<1)||(pos==str.length()-1))
@@ -319,8 +342,7 @@ void RegAndLogIn::on_lineEdit_5_editingFinished()
         ui->lineEdit_5->setStyleSheet("background-color:rgb(255,100,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
-        ui->checkBox->setEnabled(false);
-        ui->checkBox->setChecked(false);
+        dataCheckEmail=false;
     }
     else
     {
@@ -329,39 +351,57 @@ void RegAndLogIn::on_lineEdit_5_editingFinished()
         {
             if(str.at(i)=='.')
                 dot++;
-            if((str.at(i)=='.')&&((i==pos+1)||(i==str.length()-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')))
+            if((str.at(i)=='.')&&((i==pos+1)||(i==str.length()-1)||(i==str.length()-2)||(str.at(i-1)=='.')||(str.at(i+1)=='.')
+                                  ||(str.at(i-1)=='_')||(str.at(i+1)=='_')||(str.at(i-1)=='-')||(str.at(i+1)=='-')))
+                check=false;
+            if((str.at(i)=='_')&&((i==pos+1)||(i==str.length()-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')
+                                  ||(str.at(i-1)=='_')||(str.at(i+1)=='_')||(str.at(i-1)=='-')||(str.at(i+1)=='-')))
+                check=false;
+            if((str.at(i)=='-')&&((i==pos+1)||(i==str.length()-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')
+                                  ||(str.at(i-1)=='_')||(str.at(i+1)=='_')||(str.at(i-1)=='-')||(str.at(i+1)=='-')))
                 check=false;
         }
         if (dot==0)
             check=false;
         for(int i=0;i<pos;i++)
-            if((str.at(i)=='.')&&((i==0)||(i==pos-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')))
+        {
+            if((str.at(i)=='.')&&((i==0)||(i==pos-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')||(str.at(i-1)=='_')
+                                  ||(str.at(i+1)=='_')||(str.at(i-1)=='-')||(str.at(i+1)=='-')))
                 check=false;
+            if((str.at(i)=='_')&&((i==0)||(i==pos-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')||(str.at(i-1)=='_')
+                                  ||(str.at(i+1)=='_')||(str.at(i-1)=='-')||(str.at(i+1)=='-')))
+                check=false;
+            if((str.at(i)=='-')&&((i==0)||(i==pos-1)||(str.at(i-1)=='.')||(str.at(i+1)=='.')||(str.at(i-1)=='_')
+                                  ||(str.at(i+1)=='_')||(str.at(i-1)=='-')||(str.at(i+1)=='-')))
+                check=false;
+        }
         if(check==false)
         {
             ui->lineEdit_5->setStyleSheet("background-color:rgb(255,100,100);"
                                         "border: 2px solid rgb(17,164,192);"
                                         "border-radius: 5px;padding: 0 4px;");
-            ui->checkBox->setEnabled(false);
-            ui->checkBox->setChecked(false);
+            dataCheckEmail=false;
         }
         else
         {
             ui->lineEdit_5->setStyleSheet("background-color:rgb(100,255,100);"
                                         "border: 2px solid rgb(17,164,192);"
                                         "border-radius: 5px;padding: 0 4px;");
-            ui->checkBox->setEnabled(true);
+            dataCheckEmail=true;
         }
     }
+    emit sigWhatDataInReg();
 }
 
 void RegAndLogIn::on_lineEdit_2_editingFinished()
 {
     QString leng(ui->lineEdit_2->text());
-    if((leng.length()<6)&&(leng.length()>0))
+    if((leng.length()<6)&&(leng.length()>-1))
+    {
         ui->lineEdit_2->setStyleSheet("background-color:rgb(255,100,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
+    }
     if(leng.length()>5)
         ui->lineEdit_2->setStyleSheet("background-color:rgb(100,255,100);"
                                     "border: 2px solid rgb(17,164,192);"
@@ -370,7 +410,7 @@ void RegAndLogIn::on_lineEdit_2_editingFinished()
 
 void RegAndLogIn::helpIn()
 {
-    QDesktopServices::openUrl(QUrl("http://viewaide.com/help"));
+    QDesktopServices::openUrl(QUrl("http://viewaide.com/recovery-password/"));
 }
 
 void RegAndLogIn::helpReg()
@@ -381,6 +421,7 @@ void RegAndLogIn::helpReg()
 void RegAndLogIn::deal()
 {
     QDesktopServices::openUrl(QUrl("http://viewaide.com/terms"));
+    QDesktopServices::openUrl(QUrl("http://viewaide.com/terms_ru.php"));
 }
 
 void RegAndLogIn::isAccCreate()
@@ -436,6 +477,8 @@ void RegAndLogIn::slotLogout()
     file.remove();
     ui->lineEdit->setText("");
     ui->lineEdit_2->setText("");
+    ui->label->hide();
+    ui->label_2->hide();
 }
 
 void RegAndLogIn::notInputToApp()
@@ -547,6 +590,8 @@ void RegAndLogIn::slotRepeatConnect()
             ui->pushButton_4->show();
             ui->pushButton_5->show();
             ui->pushButton_6->show();
+            ui->pushButton_8->show();
+            ui->checkBox->show();
             ui->lineEdit_3->setText("");
             ui->lineEdit_3->setStyleSheet("background-color:rgb(255,255,255);"
                                         "border: 2px solid rgb(17,164,192);"
@@ -577,37 +622,79 @@ void RegAndLogIn::slotRepeatConnect()
 void RegAndLogIn::on_lineEdit_6_editingFinished()
 {
     QString leng(ui->lineEdit_6->text());
-    if((leng.length()<6)&&(leng.length()>0))
+    if((leng.length()<6)&&(leng.length()>-1))
     {
-        ui->checkBox->setEnabled(false);
-        ui->checkBox->setChecked(false);
         ui->lineEdit_6->setStyleSheet("background-color:rgb(255,100,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
+        dataCheckPass=false;
     }
     if((leng.length()>5))
     {
-        ui->checkBox->setEnabled(true);
         ui->lineEdit_6->setStyleSheet("background-color:rgb(100,255,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
+        dataCheckPass=true;
     }
+    emit sigWhatDataInReg();
 }
 
 void RegAndLogIn::on_lineEdit_3_editingFinished()
 {
     QString leng(ui->lineEdit_3->text());
     if(leng.length()>0)
+    {
         ui->lineEdit_3->setStyleSheet("background-color:rgb(100,255,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
+        dataCheckFirst=true;
+    }
+    if(leng.length()<1)
+    {
+        ui->lineEdit_3->setStyleSheet("background-color:rgb(255,100,100);"
+                                    "border: 2px solid rgb(17,164,192);"
+                                    "border-radius: 5px;padding: 0 4px;");
+        dataCheckFirst=false;
+    }
+    emit sigWhatDataInReg();
 }
 
 void RegAndLogIn::on_lineEdit_4_editingFinished()
 {
     QString leng(ui->lineEdit_4->text());
     if(leng.length()>0)
+    {
         ui->lineEdit_4->setStyleSheet("background-color:rgb(100,255,100);"
                                     "border: 2px solid rgb(17,164,192);"
                                     "border-radius: 5px;padding: 0 4px;");
+        dataCheckLast=true;
+    }
+    if(leng.isEmpty())
+    {
+        ui->lineEdit_4->setStyleSheet("background-color:rgb(255,100,100);"
+                                "border: 2px solid rgb(17,164,192);"
+                                "border-radius: 5px;padding: 0 4px;");
+        dataCheckLast=false;
+    }
+    emit sigWhatDataInReg();
+}
+
+void RegAndLogIn::slotIsDataCheckInReg()
+{
+    if((dataCheckFirst==true)&&(dataCheckLast==true)&&(dataCheckEmail==true)&&(dataCheckPass==true))
+    {
+        ui->checkBox->setCheckable(true);
+        ui->checkBox->setChecked(true);
+    }
+    else
+    {
+        ui->checkBox->setCheckable(false);
+        ui->checkBox->setChecked(false);
+        ui->pushButton_5->setEnabled(false);
+    }
+}
+
+void RegAndLogIn::on_checkBox_clicked()
+{
+    ui->checkBox->setFocus();
 }

@@ -689,14 +689,14 @@ void Main_window::slotSetDefaultWnd()
                                     "font-family: Verdana;"
                                     "text-align: center;"
                                     "color: white;"
-                                    "background-color: rgb(74, 98, 101,0);");
+                                    "background-color: rgb(74, 98, 101,1);");
 
 
         ui_2->label->setStyleSheet("font-size: 20px;"
                                    "font-family: Verdana;"
                                    "text-align: center;"
                                    "color: white;"
-                                   "background-color: rgb(74, 98, 101,255);");
+                                   "background-color: rgb(74, 98, 101,200);");
     }
 }
 

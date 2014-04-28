@@ -48,9 +48,9 @@
    <widget class="QPushButton" name="pushButton_2">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>11</x>
       <y>440</y>
-      <width>72</width>
+      <width>81</width>
       <height>23</height>
      </rect>
     </property>
@@ -378,7 +378,7 @@ padding: 0 4px;</string>
      <enum>QLineEdit::Password</enum>
     </property>
     <property name="placeholderText">
-     <string>Password</string>
+     <string>Password (more than 6 chars)</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
@@ -554,7 +554,7 @@ color:white;</string>
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;You will get your statistics of eye problems, &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;week e-mail reports,&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;personal eye gymnastics, based on application data.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;You will get your statistics of eye problems, &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;week e-mail reports,&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt; personal eye gymnastics, based on application data.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="styleSheet">
      <string notr="true">#pushButton_9
