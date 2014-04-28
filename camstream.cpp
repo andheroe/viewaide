@@ -698,7 +698,6 @@ void CamStream::RemindGym( int p1 )
     QDate date=QDate::currentDate();
     if ( !file.open( QIODevice::ReadWrite | QIODevice::Text) )
     {
-        qDebug() << "dasdas";
         file_stream.seek(0);
         file_stream << date.toString() << "\n";
         file_stream << 1500;
@@ -710,11 +709,11 @@ void CamStream::RemindGym( int p1 )
     {
         file_stream.seek(0);
         file_stream << date.toString() << "\n";
-        file_stream << p1 * 3;
-        file.close();
+        file_stream << p1 * 3;  
         if ( p1 >= avg_user_time )
             sigDrawGymWnd();
     }
+    file.close();
 }
 
 void CamStream::SaveStatistics(alert_activations alert_count,QString filename)
