@@ -6,17 +6,6 @@ ConnectWithServer::ConnectWithServer(QObject *parent) :
     manager = new QNetworkAccessManager();
 }
 
-
-void ConnectWithServer::allVarWithPhoto(QImage img,bool OpenEyes,bool NarrowedEyes,bool CloseEyes,bool NormalDist,bool NearDist,bool NormalHeight,bool Highly,bool Low,bool NormalLight,bool LightToFace,bool BadLight,float dist)
-{
-    QString filename;
-    QDateTime NowDateTime;
-    NowDateTime=QDateTime::currentDateTime();
-    filename=NowDateTime.toString("yyyyMdHms");
-    filename.append(".jpg");
-    img.save(filename, "jpg");
-}
-
 void ConnectWithServer::registration(QString firstname,QString secondname,QString mail,QString password)
 {
     QUrl url("http://viewaide.com/signup.php");

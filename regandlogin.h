@@ -15,6 +15,13 @@ class RegAndLogIn : public QMainWindow
 {
     Q_OBJECT
     
+private:
+    bool dataCheckFirst=false;
+    bool dataCheckLast=false;
+    bool dataCheckEmail=false;
+    bool dataCheckPass=false;
+    void isDataCheckInLog();
+
 public:
     explicit RegAndLogIn(QWidget *parent = 0);
     ~RegAndLogIn();
@@ -30,6 +37,7 @@ private slots:
     void on_lineEdit_5_editingFinished();
     void on_lineEdit_2_editingFinished();
 
+    void slotIsDataCheckInReg();
     void isAccCreate();
     void dataAcceptedOnServ();
     void dataNotAcceptedOnServ();
@@ -37,6 +45,7 @@ private slots:
     void on_lineEdit_6_editingFinished();
     void on_lineEdit_3_editingFinished();
     void on_lineEdit_4_editingFinished();
+    void on_checkBox_clicked();
 
 private:
     Ui::RegAndLogIn *ui;
@@ -58,6 +67,7 @@ signals:
     void windowCreate();
     void sigRepeatPlease();
     void sigRunMainProgram();
+    void sigWhatDataInReg();
 
     //for metrics
     void signalSaveMetrics();

@@ -28,7 +28,6 @@ signals:
     void falseReg();
 
 public slots:
-    void allVarWithPhoto(QImage,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,float);
     void loginRead();
     void regRead();
 
